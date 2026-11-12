@@ -1,0 +1,13 @@
+# Dependencias Backend y Frontend
+/backend/vendor/
+/backend/composer.phar
+/backend/.phpunit.cache/
+/backend/storage/*.sqlite
+/frontend/node_modules/
+/frontend/dist/
+
+# Archivos de sistema y entorno
+.DS_Store
+Thumbs.db
+.env
+*.log

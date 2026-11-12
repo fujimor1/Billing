@@ -1,0 +1,35 @@
+{
+    "name": "sfacturacion/sistema-facturacion-electronica",
+    "description": "Sistema de Facturacion Electronica UBL 2.1 (SUNAT) con Arquitectura Hexagonal y Suite de Testing en PHPUnit",
+    "type": "project",
+    "require": {
+        "php": ">=8.1",
+        "ext-dom": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "ext-openssl": "*",
+        "ext-pdo": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit --testdox",
+        "test:unit": "phpunit --testsuite Unit --testdox",
+        "test:integration": "phpunit --testsuite Integration --testdox",
+        "test:feature": "phpunit --testsuite Feature --testdox"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
