@@ -117,4 +117,43 @@ final class XmlAndCryptoIntegrationTest extends TestCase
         $this->assertSame('2335', $cdr->codigo);
         $this->assertStringContainsString('alterado o la firma digital es inválida', $cdr->mensaje);
     }
+
+    #[TestDox('Genera XML UBL 2.1 con operaciones inafectas (30) asociadas al esquema tributario SUNAT 9998 INA / FRE')]
+    public function testGeneraXmlUbl21ConOperacionesInafectasConEsquema9998(): void
+    {
+        $items = [
+            new ItemComprobante(
+                codigoProducto: 'CURS-EDU-INAF',
+                descripcion: 'Diplomado Superior en Ingeniería de Software (Inafecto)',
+                cantidad: 1,
+                valorUnitarioSinIgv: 1500.00,
+                tipoAfectacion: \App\Domain\Enums\TipoAfectacionIgv::INAFECTO_OPERACION_ONEROSA,
+                unidadMedida: 'ZZ'
+            ),
+        ];
+
+        $factura = new Comprobante(
+            new SerieCorrelativo('F001', 30, TipoComprobante::FACTURA),
+            TipoComprobante::FACTURA,
+            Cliente::conRuc('20100047218', 'BANCO DE CREDITO DEL PERU'),
+            $items,
+            $this->calculadora->calcular($items)
+        );
+
+        $xmlString = $this->xmlGenerator->generarXmlUbl21($factura);
+
+        $dom = new DOMDocument();
+        $this->assertTrue($dom->loadXML($xmlString));
+
+        $xpath = new DOMXPath($dom);
+        $xpath->registerNamespace('cbc', 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2');
+        $xpath->registerNamespace('cac', 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2');
+
+        $this->assertSame('9998', $xpath->evaluate('string(//cac:TaxCategory/cac:TaxScheme/cbc:ID)'));
+        $this->assertSame('INA', $xpath->evaluate('string(//cac:TaxCategory/cac:TaxScheme/cbc:Name)'));
+        $this->assertSame('FRE', $xpath->evaluate('string(//cac:TaxCategory/cac:TaxScheme/cbc:TaxTypeCode)'));
+        $this->assertSame('0.00', $xpath->evaluate('string(//cac:TaxSubtotal/cbc:TaxAmount)'));
+        $this->assertSame('1500.00', $xpath->evaluate('string(//cac:TaxSubtotal/cbc:TaxableAmount)'));
+        $this->assertSame('1500.00', $xpath->evaluate('string(//cac:LegalMonetaryTotal/cbc:PayableAmount)'));
+    }
 }

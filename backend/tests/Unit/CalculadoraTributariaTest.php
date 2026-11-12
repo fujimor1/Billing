@@ -152,4 +152,28 @@ final class CalculadoraTributariaTest extends TestCase
             descuentoPorcentaje: 15.0
         );
     }
+
+    #[TestDox('Calcula exactamente una operación inafecta al IGV (30) con base imponible y 0% de IGV')]
+    public function testCalculaOperacionInafectaEstricta(): void
+    {
+        $items = [
+            new ItemComprobante(
+                codigoProducto: 'CURS-EDU-INAF',
+                descripcion: 'Diplomado Superior en Ingeniería de Software (Inafecto)',
+                cantidad: 1,
+                valorUnitarioSinIgv: 1500.00,
+                tipoAfectacion: TipoAfectacionIgv::INAFECTO_OPERACION_ONEROSA,
+                unidadMedida: 'ZZ'
+            ),
+        ];
+
+        $resumen = $this->calculadora->calcular($items);
+
+        $this->assertSame(1500.00, $resumen->totalInafectas);
+        $this->assertSame(0.0, $resumen->totalGravadas);
+        $this->assertSame(0.0, $resumen->totalExoneradas);
+        $this->assertSame(0.0, $resumen->totalIgv);
+        $this->assertSame(1500.00, $resumen->importeTotal);
+        $this->assertSame(1500.00, $resumen->valorVentaNeto);
+    }
 }

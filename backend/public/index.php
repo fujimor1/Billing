@@ -26,7 +26,8 @@ use App\Infrastructure\Xml\Ubl21XmlGenerator;
 
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Headers: Content-Type, X-Idempotency-Key');
+header('Access-Control-Expose-Headers: X-Idempotent-Replayed');
 header('Content-Type: application/json; charset=utf-8');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -41,6 +42,12 @@ if (!is_dir(dirname($dbPath))) {
 
 $connection = new SqliteConnection($dbPath);
 $connection->sembrarCatalogoInicialSiVacio();
+$connection->pdo()->exec("CREATE TABLE IF NOT EXISTS idempotency_keys (
+    key TEXT PRIMARY KEY,
+    status TEXT NOT NULL,
+    response_json TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+)");
 
 $productoRepo = new SqliteProductoRepository($connection->pdo());
 $comprobanteRepo = new SqliteComprobanteRepository($connection->pdo());
@@ -90,7 +97,9 @@ function serializarComprobante(Comprobante $c): array
 
 $uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-$body = json_decode((string) file_get_contents('php://input'), true) ?? [];
+$rawInput = (string) file_get_contents('php://input');
+$cleanInput = preg_replace('/^\xEF\xBB\xBF/', '', trim($rawInput));
+$body = json_decode($cleanInput, true) ?? [];
 
 try {
     if ($uri === '/api/estado' && $method === 'GET') {
@@ -114,7 +123,172 @@ try {
         exit;
     }
 
+    if ($uri === '/api/consulta-documento' && $method === 'GET') {
+        $tipo = (string) ($_GET['tipo'] ?? '6');
+        $numero = trim((string) ($_GET['numero'] ?? ''));
+
+        if ($tipo === '6') { // RUC SUNAT
+            $rucVo = new \App\Domain\ValueObjects\Ruc($numero);
+
+            // 1. Consulta en vivo al Padrón Oficial SUNAT
+            $url = "https://api.apis.net.pe/v1/ruc?numero={$rucVo->valor()}";
+            $ctx = stream_context_create([
+                'http' => [
+                    'timeout' => 4,
+                    'header' => "User-Agent: SFacturacion/1.0\r\n",
+                    'ignore_errors' => true,
+                ],
+            ]);
+            $response = @file_get_contents($url, false, $ctx);
+            if ($response !== false) {
+                $data = json_decode($response, true);
+                if (!empty($data['nombre'])) {
+                    $dir = trim(($data['direccion'] ?? '') . ' - ' . ($data['distrito'] ?? '') . ', ' . ($data['provincia'] ?? ''));
+                    echo json_encode([
+                        'ok' => true,
+                        'tipo' => '6',
+                        'numero' => $rucVo->valor(),
+                        'razon_social' => $data['nombre'],
+                        'direccion' => $dir,
+                        'estado' => $data['estado'] ?? 'ACTIVO',
+                        'condicion' => $data['condicion'] ?? 'HABIDO',
+                        'fuente' => 'SUNAT_LIVE',
+                    ], JSON_UNESCAPED_UNICODE);
+                    exit;
+                }
+            }
+
+            // Fallback Padrón Local
+            $padronLocal = [
+                '20100047218' => ['nombre' => 'BANCO DE CREDITO DEL PERU', 'dir' => 'JR. CENTENARIO 156, LA MOLINA, LIMA', 'estado' => 'ACTIVO', 'condicion' => 'HABIDO'],
+                '20100055237' => ['nombre' => 'ALICORP SAA', 'dir' => 'AV. ARGENTINA 4793, CALLAO', 'estado' => 'ACTIVO', 'condicion' => 'HABIDO'],
+                '20131312955' => ['nombre' => 'SUPERINTENDENCIA NACIONAL DE ADUANAS Y DE ADMINISTRACION TRIBUTARIA', 'dir' => 'AV. GARCILASO DE LA VEGA 1472, LIMA', 'estado' => 'ACTIVO', 'condicion' => 'HABIDO'],
+                '20254138023' => ['nombre' => 'BANCO BBVA PERU', 'dir' => 'AV. REPUBLICA DE PANAMA 3055, SAN ISIDRO', 'estado' => 'ACTIVO', 'condicion' => 'HABIDO'],
+                '10456789124' => ['nombre' => 'JUAN ALBERTO ROJAS PEREZ', 'dir' => 'AV. AREQUIPA 2450, LINCE', 'estado' => 'ACTIVO', 'condicion' => 'HABIDO'],
+            ];
+
+            if (isset($padronLocal[$rucVo->valor()])) {
+                $emp = $padronLocal[$rucVo->valor()];
+                echo json_encode([
+                    'ok' => true,
+                    'tipo' => '6',
+                    'numero' => $rucVo->valor(),
+                    'razon_social' => $emp['nombre'],
+                    'direccion' => $emp['dir'],
+                    'estado' => $emp['estado'],
+                    'condicion' => $emp['condicion'],
+                    'fuente' => 'PADRON_LOCAL',
+                ], JSON_UNESCAPED_UNICODE);
+                exit;
+            }
+
+            echo json_encode([
+                'ok' => true,
+                'tipo' => '6',
+                'numero' => $rucVo->valor(),
+                'razon_social' => $rucVo->esPersonaJuridica() ? 'EMPRESA CONTRIBUYENTE RUC ' . $rucVo->valor() : 'PERSONA NATURAL RUC ' . $rucVo->valor(),
+                'direccion' => 'LIMA, PERÚ',
+                'estado' => 'ACTIVO',
+                'condicion' => 'HABIDO',
+                'fuente' => 'MODULO_11_VALIDO',
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        if ($tipo === '1') { // DNI RENIEC
+            $dniVo = new \App\Domain\ValueObjects\Dni($numero);
+            $url = "https://api.apis.net.pe/v1/dni?numero={$dniVo->valor()}";
+            $ctx = stream_context_create([
+                'http' => [
+                    'timeout' => 4,
+                    'header' => "User-Agent: SFacturacion/1.0\r\n",
+                    'ignore_errors' => true,
+                ],
+            ]);
+            $response = @file_get_contents($url, false, $ctx);
+            if ($response !== false) {
+                $data = json_decode($response, true);
+                if (!empty($data['nombre'])) {
+                    echo json_encode([
+                        'ok' => true,
+                        'tipo' => '1',
+                        'numero' => $dniVo->valor(),
+                        'razon_social' => $data['nombre'],
+                        'direccion' => '',
+                        'estado' => 'ACTIVO',
+                        'condicion' => 'HABIDO',
+                        'fuente' => 'RENIEC_LIVE',
+                    ], JSON_UNESCAPED_UNICODE);
+                    exit;
+                }
+            }
+
+            echo json_encode([
+                'ok' => true,
+                'tipo' => '1',
+                'numero' => $dniVo->valor(),
+                'razon_social' => 'CIUDADANO DNI ' . $dniVo->valor(),
+                'direccion' => '',
+                'estado' => 'ACTIVO',
+                'condicion' => 'HABIDO',
+                'fuente' => 'DNI_VALIDO',
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        echo json_encode([
+            'ok' => true,
+            'tipo' => '0',
+            'numero' => '00000000',
+            'razon_social' => 'CLIENTES VARIOS',
+            'direccion' => '',
+            'estado' => 'ACTIVO',
+            'condicion' => 'HABIDO',
+            'fuente' => 'DEFAULT',
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
     if ($uri === '/api/emitir' && $method === 'POST') {
+        $idempotencyKey = trim((string) ($_SERVER['HTTP_X_IDEMPOTENCY_KEY'] ?? ($body['idempotency_key'] ?? '')));
+        if ($idempotencyKey === '') {
+            $idempotencyKey = 'auto-' . md5(json_encode([
+                $body['tipo_comprobante'] ?? '',
+                $body['serie'] ?? '',
+                $body['cliente_num_doc'] ?? '',
+                $body['items'] ?? [],
+                $body['descuento_global'] ?? 0,
+                $body['porcentaje_detraccion'] ?? 0,
+                floor(time() / 15), // Ventana anti-rebote de 15 segundos
+            ]));
+        }
+
+        if ($idempotencyKey !== '') {
+            $stmt = $connection->pdo()->prepare('SELECT status, response_json FROM idempotency_keys WHERE key = :k');
+            $stmt->execute([':k' => $idempotencyKey]);
+            $record = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if ($record) {
+                if ($record['status'] === 'COMPLETED' && !empty($record['response_json'])) {
+                    header('X-Idempotent-Replayed: true');
+                    echo $record['response_json'];
+                    exit;
+                }
+                if ($record['status'] === 'IN_PROGRESS') {
+                    http_response_code(409);
+                    echo json_encode([
+                        'ok' => false,
+                        'tipo_error' => 'IdempotencyConflict',
+                        'error' => 'Operación en proceso de firma digital y validación ante SUNAT. Por favor espere unos instantes y evite clicks repetidos.',
+                    ], JSON_UNESCAPED_UNICODE);
+                    exit;
+                }
+            }
+
+            $ins = $connection->pdo()->prepare('INSERT OR REPLACE INTO idempotency_keys (key, status, response_json) VALUES (:k, :s, :r)');
+            $ins->execute([':k' => $idempotencyKey, ':s' => 'IN_PROGRESS', ':r' => null]);
+        }
+
         $modoSunat = (string) ($body['modo_simulacion_sunat'] ?? 'NORMAL');
         $sunatGateway->setModoSimulacion($modoSunat);
 
@@ -167,10 +341,19 @@ try {
             porcentajeDetraccion: (float) ($body['porcentaje_detraccion'] ?? 0.0)
         );
 
-        echo json_encode([
+        $respPayload = [
             'ok' => true,
             'comprobante' => serializarComprobante($comprobante),
-        ], JSON_UNESCAPED_UNICODE);
+            'idempotency_key' => $idempotencyKey,
+        ];
+        $respJson = json_encode($respPayload, JSON_UNESCAPED_UNICODE);
+
+        if ($idempotencyKey !== '') {
+            $upd = $connection->pdo()->prepare('UPDATE idempotency_keys SET status = :s, response_json = :r WHERE key = :k');
+            $upd->execute([':s' => 'COMPLETED', ':r' => $respJson, ':k' => $idempotencyKey]);
+        }
+
+        echo $respJson;
         exit;
     }
 
@@ -227,15 +410,18 @@ try {
 
     if ($uri === '/api/ejecutar-phpunit' && $method === 'POST') {
         $suite = (string) ($body['suite'] ?? '');
-        $phpBin = 'C:\\xampp\\php\\php.exe';
+        $phpBin = defined('PHP_BINARY') && PHP_BINARY ? PHP_BINARY : 'C:\\xampp\\php\\php.exe';
         $phpunitBin = realpath(__DIR__ . '/../vendor/bin/phpunit');
+        if (!$phpunitBin) {
+            $phpunitBin = realpath(__DIR__ . '/../vendor/bin/phpunit.bat');
+        }
         $configXml = realpath(__DIR__ . '/../phpunit.xml');
 
         $suiteArg = in_array($suite, ['Unit', 'Integration', 'Feature'], true)
             ? "--testsuite {$suite}"
             : '';
 
-        $cmd = "\"{$phpBin}\" -d extension=zip \"{$phpunitBin}\" -c \"{$configXml}\" --testdox --no-color {$suiteArg} 2>&1";
+        $cmd = "\"{$phpBin}\" \"{$phpunitBin}\" -c \"{$configXml}\" --testdox --colors=never {$suiteArg} 2>&1";
         $output = [];
         $exitCode = 0;
         exec($cmd, $output, $exitCode);
@@ -251,6 +437,12 @@ try {
     http_response_code(404);
     echo json_encode(['ok' => false, 'error' => "Ruta '{$uri}' no encontrada."]);
 } catch (FacturacionDomainException $e) {
+    if (!empty($idempotencyKey)) {
+        try {
+            $del = $connection->pdo()->prepare("DELETE FROM idempotency_keys WHERE key = :k AND status = 'IN_PROGRESS'");
+            $del->execute([':k' => $idempotencyKey]);
+        } catch (\Throwable) {}
+    }
     http_response_code(422);
     echo json_encode([
         'ok' => false,
@@ -258,6 +450,12 @@ try {
         'error' => $e->getMessage(),
     ], JSON_UNESCAPED_UNICODE);
 } catch (Throwable $e) {
+    if (!empty($idempotencyKey)) {
+        try {
+            $del = $connection->pdo()->prepare("DELETE FROM idempotency_keys WHERE key = :k AND status = 'IN_PROGRESS'");
+            $del->execute([':k' => $idempotencyKey]);
+        } catch (\Throwable) {}
+    }
     http_response_code(500);
     echo json_encode([
         'ok' => false,

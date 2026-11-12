@@ -70,11 +70,6 @@ final class SqliteConnection
 
     public function sembrarCatalogoInicialSiVacio(): void
     {
-        $stmt = $this->pdo->query("SELECT COUNT(*) FROM productos");
-        if ((int) $stmt->fetchColumn() > 0) {
-            return;
-        }
-
         $productosDemo = [
             ['LAP-PRO-16', 'Laptop Workstation Pro 16" 32GB RAM', 3500.00, 15, '10', 0, 'NIU'],
             ['MON-4K-27', 'Monitor IPS 27" 4K UHD Profesional', 1100.00, 25, '10', 0, 'NIU'],
@@ -82,10 +77,13 @@ final class SqliteConnection
             ['LIB-CLEAN-CODE', 'Libro: Ingeniería de Pruebas con PHPUnit (Exonerado IGV)', 120.00, 30, '20', 0, 'NIU'],
             ['SERV-QA-AUD', 'Servicio de Auditoría QA y Testing Automatizado', 2000.00, 999, '10', 0, 'ZZ'],
             ['BOLSA-ECO', 'Bolsa Plástica Biodegradable (Afecta ICBPER)', 0.20, 500, '10', 1, 'NIU'],
+            ['CURS-EDU-INAF', 'Diplomado Superior en Ingeniería de Software (Inafecto IGV - Servicio Educativo)', 1500.00, 30, '30', 0, 'ZZ'],
+            ['SEGU-VIDA-EMP', 'Póliza Colectiva de Seguro Médico y Vida Ley (Inafecto IGV - Art. 2 LIGV)', 380.00, 50, '30', 0, 'ZZ'],
+            ['MANZ-ORG-KG', 'Manzana Orgánica Fresca de Valle (Bien Natural Inafecto al IGV)', 8.50, 200, '30', 0, 'KGM'],
         ];
 
         $insert = $this->pdo->prepare("
-            INSERT INTO productos (codigo, descripcion, valor_unitario_sin_igv, stock_actual, tipo_afectacion, afecto_icbper, unidad_medida)
+            INSERT OR IGNORE INTO productos (codigo, descripcion, valor_unitario_sin_igv, stock_actual, tipo_afectacion, afecto_icbper, unidad_medida)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         ");
 
