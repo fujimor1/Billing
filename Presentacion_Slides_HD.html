@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Slide Deck QA - Automatización con PHPUnit 10.5</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #0b1120;
+            color: #f8fafc;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .slide {
+            width: 1920px;
+            height: 1080px;
+            max-width: 1920px;
+            max-height: 1080px;
+            padding: 60px 80px;
+            position: relative;
+            background-color: #0b1120;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(52, 211, 153, 0.06) 0%, transparent 40%);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            page-break-after: always;
+            overflow: hidden;
+        }
+
+        /* Encabezado del Slide */
+        .slide-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .slide-category {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #38bdf8;
+            margin-bottom: 6px;
+        }
+
+        .slide-title {
+            font-size: 34px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+
+        .slide-badge {
+            background-color: rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: #38bdf8;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Contenido Central */
+        .slide-body {
+            flex: 1;
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        /* Pie de página */
+        .slide-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 16px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .slide-footer-meta {
+            display: flex;
+            gap: 20px;
+        }
+
+        .slide-num {
+            font-weight: 700;
+            color: #38bdf8;
+        }
+
+        /* Ventana de Código Estilo macOS */
+        .mac-window {
+            background-color: #0f172a;
+            border: 1px solid #1e293b;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mac-titlebar {
+            background-color: #1e293b;
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .mac-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .mac-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background-color: #ef4444; }
+        .dot-yellow { background-color: #f59e0b; }
+        .dot-green { background-color: #10b981; }
+
+        .mac-filename {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .mac-code {
+            padding: 24px;
+            font-family: 'Fira Code', monospace;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #f8fafc;
+            overflow: hidden;
+            flex: 1;
+            white-space: pre;
+        }
+
+        /* Tarjetas de Información */
+        .card {
+            background-color: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 28px;
+            backdrop-filter: blur(10px);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #38bdf8;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card p, .card li {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #cbd5e1;
+        }
+
+        .card ul {
+            padding-left: 20px;
+        }
+
+        .card li {
+            margin-bottom: 10px;
+        }
+
+        /* Sintaxis de Código */
+        .token-keyword { color: #38bdf8; font-weight: 600; }
+        .token-attribute { color: #f59e0b; font-weight: 600; }
+        .token-string { color: #34d399; }
+        .token-comment { color: #64748b; font-style: italic; }
+        .token-class { color: #fb7185; }
+        .token-method { color: #a78bfa; font-weight: 600; }
+        .token-num { color: #fb923c; }
+
+        /* Cajas de Captura */
+        .img-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #090d16;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 16px 36px rgba(0,0,0,0.5);
+            padding: 12px;
+        }
+
+        .img-container img {
+            max-width: 100%;
+            max-height: 520px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .img-caption {
+            margin-top: 14px;
+            font-size: 14px;
+            color: #94a3b8;
+            text-align: center;
+        }
+    
+        /* Estilos de Modo Presentación Interactivo */
+        @media screen {
+            body.deck-mode {
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+                width: 100vw;
+                height: 100vh;
+                background-color: #050811;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            body.deck-mode .slide-wrapper {
+                position: relative;
+                width: 1920px;
+                height: 1080px;
+                transform-origin: center center;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            }
+
+            body.deck-mode .slide {
+                display: none;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 1920px;
+                height: 1080px;
+            }
+
+            body.deck-mode .slide.active-slide {
+                display: flex;
+            }
+
+            /* Barra de control flotante */
+            .floating-nav {
+                position: fixed;
+                bottom: 24px;
+                left: 50%;
+                transform: translateX(-50%);
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                background: rgba(15, 23, 42, 0.88);
+                backdrop-filter: blur(12px);
+                border: 1px solid rgba(56, 189, 248, 0.25);
+                border-radius: 9999px;
+                padding: 8px 18px;
+                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+                z-index: 99999;
+                user-select: none;
+                transition: opacity 0.3s ease;
+            }
+
+            .floating-nav:hover {
+                background: rgba(15, 23, 42, 0.98);
+                border-color: rgba(56, 189, 248, 0.5);
+            }
+
+            .nav-btn {
+                background: rgba(255, 255, 255, 0.08);
+                color: #f8fafc;
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                padding: 6px 14px;
+                border-radius: 9999px;
+                font-family: inherit;
+                font-size: 13px;
+                font-weight: 600;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                transition: all 0.2s ease;
+            }
+
+            .nav-btn:hover {
+                background: #38bdf8;
+                color: #0f172a;
+                border-color: #38bdf8;
+            }
+
+            .nav-counter {
+                color: #94a3b8;
+                font-size: 13px;
+                font-weight: 600;
+                padding: 0 8px;
+            }
+
+            .nav-counter strong {
+                color: #38bdf8;
+            }
+        }
+
+        @media print {
+            .floating-nav {
+                display: none !important;
+            }
+            .slide {
+                display: flex !important;
+                page-break-after: always;
+                break-after: page;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- ========================================== -->
+    <!-- SLIDE 1: PORTADA OFICIAL                    -->
+    <!-- ========================================== -->
+    <div class="slide">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 15px; font-weight: 700; letter-spacing: 2px; color: #38bdf8; text-transform: uppercase;">
+                Universidad Nacional de Ingeniería &bull; Facultad de Sistemas
+            </div>
+            <div class="slide-badge">Asignatura: Testing y QA de Software</div>
+        </div>
+
+        <div style="margin: 40px 0;">
+            <div style="font-size: 20px; font-weight: 700; color: #34d399; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px;">
+                Sustentación de Automatización de Pruebas
+            </div>
+            <h1 style="font-size: 54px; font-weight: 800; line-height: 1.15; color: #ffffff; margin-bottom: 20px; letter-spacing: -1px;">
+                Automatización de Pruebas con PHPUnit 10.5<br>
+                <span style="color: #38bdf8;">Facturación Electrónica SUNAT UBL 2.1</span>
+            </h1>
+            <p style="font-size: 20px; color: #94a3b8; max-width: 1200px; line-height: 1.5;">
+                Arquitectura de testing, ciclo de vida de pruebas, atributos de PHP 8, aserciones estrictas, simulación con Mocks y certificación del 100% de la suite tributaria.
+            </p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+            <div class="card" style="border-left: 4px solid #f59e0b;">
+                <div style="font-size: 14px; font-weight: 700; color: #f59e0b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">
+                    Integrantes del Equipo de QA:
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 16px; font-weight: 600; color: #f8fafc;">
+                    <div>&bull; Apolinario Rodriguez, Luis Fernando</div>
+                    <div>&bull; Umeres Vilca, Gustavo Aron</div>
+                    <div>&bull; Vasquez Falcón, Mariana Ysabel</div>
+                    <div>&bull; Ventocilla Alcantara, Alessandro Tito</div>
+                </div>
+            </div>
+
+            <div class="card" style="border-left: 4px solid #34d399; display: flex; flex-direction: column; justify-content: center;">
+                <div style="font-size: 13px; font-weight: 700; color: #34d399; text-transform: uppercase; margin-bottom: 4px;">Métrica de la Suite:</div>
+                <div style="font-size: 32px; font-weight: 800; color: #ffffff;">39 Tests &bull; 140 Aserciones</div>
+                <div style="font-size: 13px; color: #94a3b8;">100% OK &bull; 0.21 segundos en RAM (:memory:)</div>
+            </div>
+        </div>
+
+        <div class="slide-footer">
+            <div>Repositorio: github.com/fujimor1/Billing</div>
+            <div class="slide-num">Slide 01 / 18</div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SLIDE 2: QUÉ ES PHPUNIT                    -->
+    <!-- ========================================== -->
+    <div class="slide">
+        <div class="slide-header">
+            <div>
+                <div class="slide-category">Fundamentos del Framework</div>
+                <div class="slide-title">1. ¿Qué es PHPUnit y por qué lo usamos?</div>
+            </div>
+            <div class="slide-badge">PHPUnit 10.5.66</div>
+        </div>
+
+        <div class="slide-body">
+            <div class="card" style="flex: 1; height: 100%;">
+                <div class="card-title">🏆 El Estándar de Facto en PHP</div>
+                <p style="margin-bottom: 16px;">
+                    Creado por <strong>Sebastian Bergmann</strong>, PHPUnit es la herramienta indiscutible para pruebas unitarias e integración en el ecosistema profesional de PHP.
+                </p>
+                <ul>
+                    <li><strong>PHPUnit 10:</strong> Salto generacional que elimina opciones obsoletas e introduce tipado estricto sin tolerancia a advertencias.</li>
+                    <li><strong>Alineado a PHP 8.2+:</strong> Soporte nativo para atributos de lenguaje en reemplazo de anotaciones dentro de bloques de comentarios.</li>
+                    <li><strong>Totalmente Aislado:</strong> No requiere servidores web, ni navegadores, ni bases de datos físicas para probar la lógica central.</li>
+                </ul>
+            </div>
+
+            <div class="card" style="flex: 1; height: 100%;">
+                <div class="card-title">⚙️ Orquestación y Jerarquía de Suites</div>
+                <p style="margin-bottom: 16px;">
+                    A través de <span class="font-mono">backend/phpunit.xml</span>, se organiza la ejecución bajo la Pirámide de Testing:
+                </p>
+                <ul>
+                    <li><strong>Suite Unit:</strong> Pruebas matemáticas puras en memoria (microsegundos).</li>
+                    <li><strong>Suite Integration:</strong> Pruebas de esquemas XML UBL 2.1 y persistencia atómica SQLite.</li>
+                    <li><strong>Suite Feature:</strong> Casos de uso de negocio con Mocks de SUNAT.</li>
+                    <li><strong>Reporte Testdox:</strong> Genera documentación legible para humanos a partir del nombre de cada método.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide-footer">
+            <div>Testing y Calidad de Software &bull; Sistema de Facturación Electrónica</div>
+            <div class="slide-num">Slide 02 / 18</div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SLIDE 3: CICLO DE VIDA DE LAS PRUEBAS      -->
+    <!-- ========================================== -->
+    <div class="slide">
+        <div class="slide-header">
+            <div>
+                <div class="slide-category">Arquitectura de Testing</div>
+                <div class="slide-title">2. El Ciclo de Vida de las Pruebas (Test Lifecycle)</div>
+            </div>
+            <div class="slide-badge">Aislamiento Total</div>
+        </div>
+
+        <div class="slide-body">
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 20px;">
+                <div class="card">
+                    <div class="card-title">🔄 Los Hooks de Inicialización</div>
+                    <p>Para evitar <strong>pruebas intermitentes o contaminadas (Flaky Tests)</strong>, PHPUnit proporciona métodos de enganche que garantizan un entorno limpio:</p>
+                    <ul style="margin-top: 10px;">
+                        <li><strong>setUpBeforeClass():</strong> 1 vez antes de toda la clase.</li>
+                        <li><strong>setUp():</strong> Antes de <em>cada prueba individual</em>. Reinicia la BD en memoria.</li>
+                        <li><strong>tearDown():</strong> Después de <em>cada prueba</em>. Destruye objetos en RAM.</li>
+                        <li><strong>tearDownAfterClass():</strong> Cierre final de recursos.</li>
+                    </ul>
+                </div>
+                <div class="card" style="background-color: rgba(52, 211, 153, 0.1); border-color: rgba(52, 211, 153, 0.3);">
+                    <div style="font-weight: 700; color: #34d399; margin-bottom: 6px;">¿Cómo lo aplicamos en nuestro sistema?</div>
+                    <p style="font-size: 14px;">Cada test crea una conexión nueva a <span class="font-mono">sqlite::memory:</span> y siembra el catálogo de 9 productos. Ningún test hereda datos del test anterior.</p>
+                </div>
+            </div>
+
+            <div style="flex: 1.2; height: 100%;">
+                <div class="mac-window">
+                    <div class="mac-titlebar">
+                        <div class="mac-dots"><div class="mac-dot dot-red"></div><div class="mac-dot dot-yellow"></div><div class="mac-dot dot-green"></div></div>
+                        <div class="mac-filename">SqlitePersistenceIntegrationTest.php</div>
+                    </div>
+                    <div class="mac-code"><span class="token-keyword">protected function</span> <span class="token-method">setUp</span>(): <span class="token-keyword">void</span> 
+{
+    <span class="token-keyword">parent</span>::<span class="token-method">setUp</span>();
+    
+    <span class="token-comment">// 1. Instanciamos SQLite puro en RAM (0 residuos en disco)</span>
+    <span class="token-keyword">$this</span>->pdo = <span class="token-keyword">new</span> PDO(<span class="token-string">'sqlite::memory:'</span>);
+    <span class="token-keyword">$this</span>->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    
+    <span class="token-comment">// 2. Migramos tablas y sembramos los 9 productos</span>
+    <span class="token-keyword">$this</span>->migrador->ejecutar(<span class="token-keyword">$this</span>->pdo);
+    <span class="token-keyword">$this</span>->seeder->sembrarCatalogo(<span class="token-keyword">$this</span>->pdo);
+}
+
+<span class="token-keyword">protected function</span> <span class="token-method">tearDown</span>(): <span class="token-keyword">void</span> 
+{
+    <span class="token-keyword">$this</span>->pdo = <span class="token-keyword">null</span>; <span class="token-comment">// Destruye la BD en RAM al instante</span>
+    <span class="token-keyword">parent</span>::<span class="token-method">tearDown</span>();
+}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-footer">
+            <div>Testing y Calidad de Software &bull; Sistema de Facturación Electrónica</div>
+            <div class="slide-num">Slide 03 / 18</div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SLIDE 4: EL PATRÓN AAA & PRINCIPIOS FIRST -->
+    <!-- ========================================== -->
+    <div class="slide">
+        <div class="slide-header">
+            <div>
+                <div class="slide-category">Buenas Prácticas de Ingeniería</div>
+                <div class="slide-title">3. El Patrón AAA (Arrange - Act - Assert) & Principios FIRST</div>
+            </div>
+            <div class="slide-badge">Estándar de Calidad</div>
+        </div>
+
+        <div class="slide-body">
+            <div class="card" style="flex: 1.1;">
+                <div class="card-title">🧩 Las Tres Fases de una Prueba Limpia (AAA)</div>
+                <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 10px;">
+                    <div style="border-left: 3px solid #38bdf8; padding-left: 14px;">
+                        <strong style="color: #38bdf8;">1. Arrange (Preparar):</strong> Configurar el estado previo, crear entidades de dominio (RUC, ítems) y preparar dobles de prueba (Mocks).
+                    </div>
+                    <div style="border-left: 3px solid #f59e0b; padding-left: 14px;">
+                        <strong style="color: #f59e0b;">2. Act (Actuar):</strong> Ejecutar el método o caso de uso bajo prueba (ej. <span class="font-mono">calcular()</span> o <span class="font-mono">emitirFactura()</span>).
+                    </div>
+                    <div style="border-left: 3px solid #34d399; padding-left: 14px;">
+                        <strong style="color: #34d399;">3. Assert (Afirmar):</strong> Verificar que el resultado obtenido coincide exactamente con la expectativa técnica o fiscal.
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="flex: 1;">
+                <div class="card-title">⚡ Los 5 Principios FIRST de Robert C. Martin</div>
+                <ul>
+                    <li><strong style="color: #38bdf8;">Fast (Rápidas):</strong> 39 tests corren en <strong>0.21 segundos</strong>. Si fueran lentas, los desarrolladores no las correrían.</li>
+                    <li><strong style="color: #38bdf8;">Independent (Independientes):</strong> Ningún test depende del resultado de otro. Pueden correr en cualquier orden.</li>
+                    <li><strong style="color: #38bdf8;">Repeatable (Repetibles):</strong> Dan exactamente el mismo resultado en local, en servidor o en CI/CD.</li>
+                    <li><strong style="color: #38bdf8;">Self-validating (Auto-evaluables):</strong> El resultado es binario: verde (pasa) o rojo (falla). Cero interpretación manual.</li>
+                    <li><strong style="color: #38bdf8;">Timely (Oportunas):</strong> Se diseñan junto con la lógica de negocio.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slide-footer">
+            <div>Testing y Calidad de Software &bull; Sistema de Facturación Electrónica</div>
+            <div class="slide-num">Slide 04 / 18</div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SLIDE 5: PRUEBAS PARAMETRIZADAS (DATA PROVIDER) -->
+    <!-- ========================================== -->
+    <div class="slide">
+        <div class="slide-header">
+            <div>
+                <div class="slide-category">Decoradores y Atributos de PHP 8</div>
+                <div class="slide-title">4. Pruebas Parametrizadas: Atributo #[DataProvider]</div>
+            </div>
+            <div class="slide-badge">PHP 8 Native Attributes</div>
+        </div>
+
+        <div class="slide-body">
+            <div style="flex: 0.9; display: flex; flex-direction: column; gap: 20px;">
+                <div class="card">
+                    <div class="card-title">🎯 Cero Código Repetitivo (DRY)</div>
+                    <p style="margin-bottom: 12px;">
+                        En lugar de escribir 10 métodos de prueba distintos para validar 10 números de RUC diferentes, el atributo <span class="font-mono">#[DataProvider]</span> inyecta una matriz de tuplas directamente al método de prueba.
+                    </p>
+                    <ul>
+                        <li><strong>Equivalencia en Java:</strong> Es exactamente el equivalente a <span class="font-mono">@ParameterizedTest</span> y <span class="font-mono">@CsvSource</span> de JUnit 5.</li>
+                        <li><strong>Técnica de QA:</strong> Aplica <em>Partición de Equivalencia</em>: RUCs 20 (empresas), RUCs 10 (personas naturales) y RUCs 15 (FFAA).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="flex: 1.3; height: 100%;">
+                <div class="mac-window">
+                    <div class="mac-titlebar">
+                        <div class="mac-dots"><div class="mac-dot dot-red"></div><div class="mac-dot dot-yellow"></div><div class="mac-dot dot-green"></div></div>
+                        <div class="mac-filename">ValueObjectsTest.php</div>
+                    </div>
+                    <div class="mac-code"><span class="token-attribute">#[DataProvider('proveedorRucsValidos')]</span>
+<span class="token-keyword">public function</span> <span class="token-method">testAceptaRucsValidos</span>(<span class="token-keyword">string</span> $ruc, <span class="token-keyword">string</span> $tipo): <span class="token-keyword">void</span> 
+{
+    <span class="token-comment">// Arrange & Act: Instanciamos el Value Object</span>
+    $vo = <span class="token-keyword">new</span> <span class="token-class">Ruc</span>($ruc);
+
+    <span class="token-comment">// Assert: Verificamos identidad estricta</span>
+    <span class="token-keyword">$this</span>-><span class="token-method">assertSame</span>($ruc, $vo->valor());
+}
+
+<span class="token-keyword">public static function</span> <span class="token-method">proveedorRucsValidos</span>(): <span class="token-keyword">array</span> 
+{
+    <span class="token-keyword">return</span> [
+        <span class="token-string">'RUC 20 SUNAT'</span>   => [<span class="token-string">'20131312955'</span>, <span class="token-string">'Jurídica'</span>],
+        <span class="token-string">'RUC 20 BCP'</span>     => [<span class="token-string">'20100047218'</span>, <span class="token-string">'Bancaria'</span>],
+        <span class="token-string">'RUC 20 ALICORP'</span> => [<span class="token-string">'20100055237'</span>, <span class="token-string">'Industrial'</span>],
+        <span class="token-string">'RUC 10 PERSONA'</span> => [<span class="token-string">'10456789124'</span>, <span class="token-string">'Natural'</span>],
+    ];
+}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-footer">
+            <div>Testing y Calidad de Software &bull; Sistema de Facturación Electrónica</div>
+            <div class="slide-num">Slide 05 / 18</div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SLIDE 6: ASERCIONES: ASSERTSAME VS ASSERTEQUALS -->
+    <!-- ========================================== -->
+    <div class="slide">
+        <div class="slide-header">
+            <div>
+                <div class="slide-category">Rigurosidad en Aserciones</div>
+                <div class="slide-title">5. Catálogo de Aserciones: assertSame vs assertEquals</div>
+            </div>
+            <div class="slide-badge">Tipado Estricto</div>
+        </div>
+
+        <div class="slide-body">
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 16px;">
+                <div class="card" style="border-left: 4px solid #f59e0b;">
+                    <div style="font-size: 16px; font-weight: 700; color: #f59e0b; margin-bottom: 8px;">⚠️ El Peligro de la Igualdad Débil (assertEquals)</div>
+                    <p style="font-size: 14px;">
+                        En PHP, <span class="font-mono">assertEquals</span> usa coerción débil (<span class="font-mono">==</span>). Por ejemplo, <span class="font-mono">"100" == 100</span> da VERDADERO. En sistemas financieros, esto puede esconder errores de redondeo o conversiones accidentales a string.
+                    </p>
+                </div>
+                <div class="card" style="border-left: 4px solid #34d399;">
+                    <div style="font-size: 16px; font-weight: 700; color: #34d399; margin-bottom: 8px;">🛡️ Identidad Estricta (assertSame)</div>
+                    <p style="font-size: 14px;">
+                        Comprueba valor y tipo (<span class="font-mono">===</span>). Si esperas <span class="font-mono">float 180.00</span> y el motor devuelve <span class="font-mono">int 180</span>, la prueba falla legítimamente.
+                    </p>
+                </div>
+                <div class="card" style="border-left: 4px solid #38bdf8;">
+                    <div style="font-size: 16px; font-weight: 700; color: #38bdf8; margin-bottom: 8px;">💥 Aserciones de Excepción</div>
+                    <p style="font-size: 14px;">
+                        <span class="font-mono">expectException()</span> permite auditar los caminos de fallo: si el usuario intenta violar una norma SUNAT, el test valida que se lance la excepción correcta.
+                    </p>
+                </div>
+            </div>
+
+            <div style="flex: 1.1; height: 100%;">
+                <div class="mac-window">
+                    <div class="mac-titlebar">
+                        <div class="mac-dots"><div class="mac-dot dot-red"></div><div class="mac-dot dot-yellow"></div><div class="mac-dot dot-green"></div></div>
+                        <div class="mac-filename">ComprobanteDomainRulesTest.php</div>
+                    </div>
+                    <div class="mac-code"><span class="token-comment">// Regla SUNAT 2017: Factura exige RUC; rechaza DNI</span>
+<span class="token-keyword">public function</span> <span class="token-method">testImpideEmitirFacturaAClienteConDni</span>(): <span class="token-keyword">void</span> 
+{
+    <span class="token-comment">// Assert previo: Esperamos la excepcion tributaria</span>
+    <span class="token-keyword">$this</span>-><span class="token-method">expectException</span>(<span class="token-class">DomainValidationException</span>::<span class="token-keyword">class</span>);
+    <span class="token-keyword">$this</span>-><span class="token-method">expectExceptionMessage</span>(
+        <span class="token-string">"Solo se emiten Facturas (01) a clientes con RUC"</span>
+    );
+
+    <span class="token-comment">// Arrange</span>
+    $emisor = <span class="token-keyword">new</span> <span class="token-class">Emisor</span>(<span class="token-keyword">new</span> <span class="token-class">Ruc</span>(<span class="token-string">'20131312955'</span>));
+    $clienteConDni = <span class="token-keyword">new</span> <span class="token-class">Cliente</span>(<span class="token-keyword">new</span> <span class="token-class">Dni</span>(<span class="token-string">'72345678'</span>));
+
+    <span class="token-comment">// Act: Dispara la excepcion interceptada</span>
+    <span class="token-class">Comprobante</span>::<span class="token-method">crearFactura</span>(
+        <span class="token-string">'F001'</span>, <span class="token-num">1</span>, $emisor, $clienteConDni
+    );
+}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-footer">
+            <div>Testing y Calidad de Software &bull; Sistema de Facturación Electrónica</div>
+            <div class="slide-num">Slide 06 / 18</div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SLIDE 7: DOBLES DE PRUEBA: MOCKS Y SPIES   -->
+    <!-- ========================================== -->
+    <div class="slide">
+        <div class="slide-header">
+            <div>
+                <div class="slide-category">Patrones de Dobles de Prueba</div>
+                <div class="slide-title">6. Dobles de Prueba: Mocks y Spies de SUNAT (Martin Fowler)</div>
+            </div>
+            <div class="slide-badge">Simulación Resiliente</div>
+        </div>
+
+        <div class="slide-body">
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 16px;">
+                <div class="card">
+                    <div class="card-title">🎯 ¿Por qué Mocks y no el Web Service Real?</div>
+                    <ul>
+                        <li><strong>Inestabilidad:</strong> Los servidores SOAP de SUNAT sufren micro-cortes y lentitud (2 a 5 seg).</li>
+                        <li><strong>Costo y Certificados:</strong> Requiere certificados digitales y conexión permanente a internet.</li>
+                        <li><strong>Escenarios Catastróficos:</strong> Con un Mock podemos forzar caídas HTTP 504 o rechazos raros (ej. CDR 2800) a voluntad.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="card-title">🕵️ Verificación de Comportamiento con Spies</div>
+                    <p style="font-size: 14px;">
+                        Con <span class="font-mono">expects($this->never())</span> garantizamos que si una regla de negocio falla (ej. sin stock), el sistema <strong>jamás gaste un correlativo ni llame a la red</strong>.
+                    </p>
+                </div>
+            </div>
+
+            <div style="flex: 1.2; height: 100%;">
+                <div class="mac-window">
+                    <div class="mac-titlebar">
+                        <div class="mac-dots"><div class="mac-dot dot-red"></div><div class="mac-dot dot-yellow"></div><div class="mac-dot dot-green"></div></div>
+                        <div class="mac-filename">FacturacionElectronicaMocksFeatureTest.php</div>
+                    </div>
+                    <div class="mac-code"><span class="token-comment">// Spy: Verifica que NUNCA se llame a SUNAT si no hay stock</span>
+<span class="token-keyword">public function</span> <span class="token-method">testNoLlamaASunatSiNoHayStock</span>(): <span class="token-keyword">void</span> 
+{
+    <span class="token-comment">// 1. Creamos el Mock como Spy</span>
+    $sunatSpy = <span class="token-keyword">$this</span>-><span class="token-method">createMock</span>(<span class="token-class">SunatGatewayInterface</span>::<span class="token-keyword">class</span>);
+    
+    <span class="token-comment">// Asercion de comportamiento: NUNCA debe invocarse</span>
+    $sunatSpy-><span class="token-method">expects</span>(<span class="token-keyword">$this</span>-><span class="token-method">never</span>())
+             -><span class="token-method">method</span>(<span class="token-string">'enviarComprobante'</span>);
+
+    <span class="token-keyword">$this</span>-><span class="token-method">expectException</span>(<span class="token-class">StockInsuficienteException</span>::<span class="token-keyword">class</span>);
+
+    <span class="token-comment">// 2. Intenta vender 50 laptops (solo hay 15 en stock)</span>
+    $service = <span class="token-keyword">new</span> <span class="token-class">FacturacionService</span>(<span class="token-keyword">$this</span>->kardex, $sunatSpy);
+    $service-><span class="token-method">emitirFactura</span>($pedidoDe50Laptops);
+}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-footer">
+            <div>Testing y Calidad de Software &bull; Sistema de Facturación Electrónica</div>
+            <div class="slide-num">Slide 07 / 18</div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SLIDE 8: PIRÁMIDE DE MIKE COHN             -->
+    <!-- ========================================== -->
+    <div class="slide">
+        <div class="slide-header">
+            <div>
+                <div class="slide-category">Estrategia de Calidad</div>
+                <div class="slide-title">7. Pirámide de Pruebas de Mike Cohn Aplicada al Sistema</div>
+            </div>
+            <div class="slide-badge">Distribución Óptima</div>
+        </div>
+
+        <div class="slide-body">
+            <div style="flex: 1.1; display: flex; flex-direction: column; gap: 16px;">
+                <div class="card" style="border-left: 4px solid #38bdf8;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <strong style="color: #38bdf8; font-size: 16px;">Base: 26 Pruebas Unitarias (67%)</strong>
+                        <span class="slide-badge">0.05 segundos</span>
+                    </div>
+                    <p style="font-size: 14px;">Prueban Value Objects (RUC Módulo 11, DNI), Calculadora Tributaria (IGV 18%, ICBPER, SPOT) y Reglas de Comprobante en memoria pura.</p>
+                </div>
+
+                <div class="card" style="border-left: 4px solid #34d399;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <strong style="color: #34d399; font-size: 16px;">Medio: 7 Pruebas de Integración (18%)</strong>
+                        <span class="slide-badge">0.08 segundos</span>
+                    </div>
+                    <p style="font-size: 14px;">Validan la estructura XML UBL 2.1 con XPath, la firma digital XMLDSIG SHA-256, persistencia SQLite e idempotencia.</p>
+                </div>
+
+                <div class="card" style="border-left: 4px solid #f59e0b;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <strong style="color: #f59e0b; font-size: 16px;">Cúspide: 6 Pruebas Feature (15%)</strong>
+                        <span class="slide-badge">0.08 segundos</span>
+                    </div>
+                    <p style="font-size: 14px;">Simulan el ciclo de venta completo, caídas de red, notas de crédito y reversión de Kardex con Mocks de SUNAT.</p>
+                </div>
+            </div>
+
+            <div class="card" style="flex: 0.9; height: 100%; display: flex; flex-direction: column; justify-content: center; background: linear-gradient(135deg, rgba(15,23,42,0.9) 0%, rgba(30,41,59,0.9) 100%);">
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <div style="font-size: 14px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Métricas Consolidadas de la Suite:</div>
+                    <div style="font-size: 64px; font-weight: 800; color: #34d399; line-height: 1;">39 / 39</div>
+                    <div style="font-size: 18px; font-weight: 700; color: #ffffff; margin-top: 6px;">Pruebas Exitosas (100% OK)</div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 28px; font-weight: 800; color: #38bdf8;">140</div>
+                        <div style="font-size: 12px; color: #94a3b8;">Aserciones Auditadas</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 28px; font-weight: 800; color: #f59e0b;">0.21s</div>
+                        <div style="font-size: 12px; color: #94a3b8;">Tiempo de Ejecución</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-footer">
+            <div>Testing y Calidad de Software &bull; Sistema de Facturación Electrónica</div>
+            <div class="slide-num">Slide 08 / 18</div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SLIDE 9: CASO 1: ALGORITMO RUC MÓDULO 11   -->
+    <!-- ========================================== -->
+    <div class="slide">
+        <div class="slide-header">
+            <div>
+                <div class="slide-category">Caso de Estudio 1 &bull; Capa de Dominio</div>
+                <div class="slide-title">8. Algoritmo SUNAT Módulo 11 en Value Object Ruc</div>
+            </div>
+            <div class="slide-badge">Ponderación Oficial SUNAT</div>
+        </div>
+
+        <div class="slide-body">
+            <div style="flex: 0.95; display: flex; flex-direction: column; gap: 16px;">
+                <div class="card">
+                    <div class="card-title">📐 Algoritmo Ponderado de 11 Dígitos</div>
+                    <p style="font-size: 14px; margin-bottom: 10px;">
+                        SUNAT no valida el RUC únicamente por su longitud, sino aplicando una fórmula matemática ponderada sobre los primeros 10 dígitos:
+                    </p>
+                    <div style="background-color: #0b1120; border: 1px solid #1e293b; padding: 10px 14px; border-radius: 6px; font-family: 'Fira Code', monospace; font-size: 13px; color: #38bdf8; margin-bottom: 10px;">
+                        Factores: [5, 4, 3, 2, 7, 6, 5, 4, 3, 2]
+                    </div>
+                    <ul>
+                        <li>$S = \sum_{i=0}^{9} (d_i 	imes f_i)$</li>
+                        <li>$Resto = 11 - (S \pmod{11})$</li>
+                        <li>Si $Resto == 10 \implies 0$; Si $Resto == 11 \implies 1$.</li>
+                        <li>El dígito verificador debe coincidir con el dígito 11.</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-left: 4px solid #34d399;">
+                    <div style="font-weight: 700; color: #34d399; font-size: 13px;">Beneficio en QA:</div>
+                    <p style="font-size: 13px;">Rechaza RUCs falsificados o errores tipográficos antes de registrar datos o enviar facturas a SUNAT.</p>
+                </div>
+            </div>
+
+            <div style="flex: 1.25; height: 100%;">
+                <div class="mac-window">
+                    <div class="mac-titlebar">
+                        <div class="mac-dots"><div class="mac-dot dot-red"></div><div class="mac-dot dot-yellow"></div><div class="mac-dot dot-green"></div></div>
+                        <div class="mac-filename">src/Domain/ValueObjects/Ruc.php</div>
+                    </div>
+                    <div class="mac-code"><span class="token-keyword">private function</span> <span class="token-method">validarModulo11</span>(<span class="token-keyword">string</span> $ruc): <span class="token-keyword">void</span> 
+{
+    $factores = [<span class="token-num">5</span>, <span class="token-num">4</span>, <span class="token-num">3</span>, <span class="token-num">2</span>, <span class="token-num">7</span>, <span class="token-num">6</span>, <span class="token-num">5</span>, <span class="token-num">4</span>, <span class="token-num">3</span>, <span class="token-num">2</span>];
+    $suma = <span class="token-num">0</span>;
+    <span class="token-keyword">for</span> ($i = <span class="token-num">0</span>; $i < <span class="token-num">10</span>; $i++) {
+        $suma += ((<span class="token-keyword">int</span>) $ruc[$i]) * $factores[$i];
+    }
+
+    $resto = <span class="token-num">11</span> - ($suma % <span class="token-num">11</span>);
+    $dvEsperado = <span class="token-keyword">match</span> ($resto) {
+        <span class="token-num">10</span> => <span class="token-num">0</span>,
+        <span class="token-num">11</span> => <span class="token-num">1</span>,
+        <span class="token-keyword">default</span> => $resto
+    };
+
+    <span class="token-keyword">if</span> ($dvEsperado !== (<span class="token-keyword">int</span>) $ruc[<span class="token-num">10</span>]) {
+        <span class="token-keyword">throw new</span> <span class="token-class">DomainValidationException</span>(
+            <span class="token-string">"Dígito verificador de RUC inválido (esperado: $dvEsperado)"</span>
+        );
+    }
+}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-footer">
+            <div>Testing y Calidad de Software &bull; Sistema de Facturación Electrónica</div>
+            <div class="slide-num">Slide 09 / 18</div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SLIDE 10: CASO 2: CALCULADORA TRIBUTARIA   -->
+    <!-- ========================================== -->
+    <div class="slide">
+        <div class="slide-header">
+            <div>
+                <div class="slide-category">Caso de Estudio 2 &bull; Motor Tributario</div>
+                <div class="slide-title">9. Liquidación de Comprobante Mixto Complejo</div>
+            </div>
+            <div class="slide-badge">Convivencia Multirégimen</div>
+        </div>
+
+        <div class="slide-body">
+            <div style="flex: 0.95; display: flex; flex-direction: column; gap: 16px;">
+                <div class="card">
+                    <div class="card-title">⚖️ Afectaciones Tributarias SUNAT</div>
+                    <ul>
+                        <li><strong>Gravado (10):</strong> Aplica el 18% de IGV (Base S/ 1,000 $\implies$ S/ 180 IGV).</li>
+                        <li><strong>Exonerado (20):</strong> Libros Ley 31053 (0% IGV).</li>
+                        <li><strong>Gratuito (15):</strong> Muestras promocionales. Tiene IGV referencial pero <strong>no suma al total a pagar</strong>.</li>
+                        <li><strong>Bolsas Plásticas:</strong> Impuesto ICBPER fijo (S/ 0.50 cada una) sin contaminar la base del IGV.</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-left: 4px solid #38bdf8;">
+                    <strong style="color: #38bdf8;">Verificación Matemática:</strong> El test comprueba que cada bolsa fiscal se totalice de forma estricta y sin pérdidas de centavos.
+                </div>
+            </div>
+
+            <div style="flex: 1.25; height: 100%;">
+                <div class="mac-window">
+                    <div class="mac-titlebar">
+                        <div class="mac-dots"><div class="mac-dot dot-red"></div><div class="mac-dot dot-yellow"></div><div class="mac-dot dot-green"></div></div>
+                        <div class="mac-filename">CalculadoraTributariaTest.php</div>
+                    </div>
+                    <div class="mac-code"><span class="token-keyword">public function</span> <span class="token-method">testCalculaComprobanteMixtoComplejo</span>(): <span class="token-keyword">void</span> 
+{
+    $calc = <span class="token-keyword">new</span> <span class="token-class">CalculadoraTributaria</span>();
+    $totales = $calc-><span class="token-method">calcular</span>([
+        <span class="token-keyword">new</span> <span class="token-class">Item</span>(<span class="token-string">'Monitor LED'</span>, <span class="token-num">1000.0</span>, <span class="token-num">1</span>, <span class="token-string">'10'</span>), <span class="token-comment">// Gravado 18%</span>
+        <span class="token-keyword">new</span> <span class="token-class">Item</span>(<span class="token-string">'Libro Java'</span>,  <span class="token-num">200.0</span>,  <span class="token-num">1</span>, <span class="token-string">'20'</span>), <span class="token-comment">// Exonerado 0%</span>
+        <span class="token-keyword">new</span> <span class="token-class">Item</span>(<span class="token-string">'Regalo'</span>,      <span class="token-num">50.0</span>,   <span class="token-num">1</span>, <span class="token-string">'15'</span>), <span class="token-comment">// Gratuito</span>
+        <span class="token-keyword">new</span> <span class="token-class">Item</span>(<span class="token-string">'Bolsa'</span>,       <span class="token-num">0.10</span>,   <span class="token-num">2</span>, <span class="token-string">'10'</span>, icbper: <span class="token-keyword">true</span>)
+    ]);
+
+    <span class="token-keyword">$this</span>-><span class="token-method">assertSame</span>(<span class="token-num">1000.0</span>, $totales->gravado);
+    <span class="token-keyword">$this</span>-><span class="token-method">assertSame</span>(<span class="token-num">180.0</span>,  $totales->igv);
+    <span class="token-keyword">$this</span>-><span class="token-method">assertSame</span>(<span class="token-num">200.0</span>,  $totales->exonerado);
+    <span class="token-keyword">$this</span>-><span class="token-method">assertSame</span>(<span class="token-num">1.00</span>,   $totales->icbper); <span class="token-comment">// 2 bolsas x S/ 0.50</span>
+    <span class="token-keyword">$this</span>-><span class="token-method">assertSame</span>(<span class="token-num">1381.20</span>, $totales->totalPagar);
+}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-footer">
+            <div>Testing y Calidad de Software &bull; Sistema de Facturación Electrónica</div>
+            <div class="slide-num">Slide 10 / 18</div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SLIDE 11: CASO 3: VALORES LÍMITE (700 SOLES)-->
+    <!-- ========================================== -->
+    <div class="slide">
+        <div class="slide-header">
+            <div>
+                <div class="slide-category">Caso de Estudio 3 &bull; Reglas de Negocio SUNAT</div>
+                <div class="slide-title">10. Análisis de Valores Límite: Boleta Mayor a S/ 700.00</div>
+            </div>
+            <div class="slide-badge">Boundary Value Analysis</div>
+        </div>
+
+        <div class="slide-body">
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 16px;">
+                <div class="card">
+                    <div class="card-title">🔍 Técnica de Caja Negra: Valores Límite</div>
+                    <p style="font-size: 14px; margin-bottom: 12px;">
+                        Los defectos de software se concentran en las fronteras de las condiciones lógicas. La <strong>Resolución SUNAT 007-99</strong> establece que una boleta anónima sólo puede emitirse hasta S/ 700.00.
+                    </p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px;">
+                        <div style="background-color: rgba(52, 211, 153, 0.15); border: 1px solid rgba(52, 211, 153, 0.3); padding: 10px; border-radius: 6px;">
+                            <strong style="color: #34d399;">Frontera Válida:</strong><br>
+                            Monto = S/ 700.00 $\implies$ Pasa sin DNI (Anónimo).
+                        </div>
+                        <div style="background-color: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); padding: 10px; border-radius: 6px;">
+                            <strong style="color: #ef4444;">Frontera Inválida:</strong><br>
+                            Monto = S/ 700.01 $\implies$ Lanza Error 2511 exigiendo DNI.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="flex: 1.2; height: 100%;">
+                <div class="mac-window">
+                    <div class="mac-titlebar">
+                        <div class="mac-dots"><div class="mac-dot dot-red"></div><div class="mac-dot dot-yellow"></div><div class="mac-dot dot-green"></div></div>
+                        <div class="mac-filename">ComprobanteDomainRulesTest.php</div>
+                    </div>
+                    <div class="mac-code"><span class="token-comment">// Test 22: Boleta > S/ 700 sin DNI DEBE ser rechazada</span>
+<span class="token-keyword">public function</span> <span class="token-method">testImpideBoletaMayorASetecientosSinDni</span>(): <span class="token-keyword">void</span> 
+{
+    <span class="token-keyword">$this</span>-><span class="token-method">expectException</span>(<span class="token-class">DomainValidationException</span>::<span class="token-keyword">class</span>);
+    <span class="token-keyword">$this</span>-><span class="token-method">expectExceptionMessage</span>(
+        <span class="token-string">"Boletas mayores a S/ 700 requieren identificar al cliente (DNI)"</span>
+    );
+
+    <span class="token-comment">// Intentamos emitir S/ 767.00 a 'Clientes Varios' (sin DNI)</span>
+    <span class="token-class">Comprobante</span>::<span class="token-method">crearBoleta</span>(
+        <span class="token-string">'B001'</span>, <span class="token-num">1</span>, <span class="token-keyword">$this</span>->emisor, <span class="token-class">Cliente</span>::<span class="token-method">clientesVarios</span>(),
+        [<span class="token-keyword">new</span> <span class="token-class">Item</span>(<span class="token-string">'Televisor'</span>, <span class="token-num">650.0</span>, <span class="token-num">1</span>, <span class="token-string">'10'</span>)] <span class="token-comment">// + IGV = 767.00</span>
+    );
+}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-footer">
+            <div>Testing y Calidad de Software &bull; Sistema de Facturación Electrónica</div>
+            <div class="slide-num">Slide 11 / 18</div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SLIDE 12: CASO 4: CRIPTOGRAFÍA & TAMPER TEST -->
+    <!-- ========================================== -->
+    <div class="slide">
+        <div class="slide-header">
+            <div>
+                <div class="slide-category">Caso de Estudio 4 &bull; Criptografía XMLDSIG</div>
+                <div class="slide-title">11. Prueba de Seguridad: Tamper Test (Código 2335)</div>
+            </div>
+            <div class="slide-badge">Inviolabilidad de la Firma</div>
+        </div>
+
+        <div class="slide-body">
+            <div style="flex: 0.95; display: flex; flex-direction: column; gap: 16px;">
+                <div class="card">
+                    <div class="card-title">🛡️ Ataque de Alteración de Importe</div>
+                    <p style="font-size: 14px; margin-bottom: 12px;">
+                        ¿Qué pasa si un usuario malicioso intercepta el archivo XML ya firmado digitalmente y cambia el monto de <strong>S/ 1,180.00</strong> a <strong>S/ 10.00</strong> para evadir impuestos?
+                    </p>
+                    <ul>
+                        <li>El algoritmo SHA-256 recalcula el digest del árbol XML canónico.</li>
+                        <li>Al detectar que el valor no coincide con el nodo <span class="font-mono">&lt;ds:DigestValue&gt;</span>, SUNAT rechaza la transacción.</li>
+                        <li><strong>Código Fiscal Oficial:</strong> Rechazo <strong>2335 - La firma digital ha sido alterada</strong>.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="flex: 1.25; height: 100%;">
+                <div class="mac-window">
+                    <div class="mac-titlebar">
+                        <div class="mac-dots"><div class="mac-dot dot-red"></div><div class="mac-dot dot-yellow"></div><div class="mac-dot dot-green"></div></div>
+                        <div class="mac-filename">XmlAndCryptoIntegrationTest.php</div>
+                    </div>
+                    <div class="mac-code"><span class="token-keyword">public function</span> <span class="token-method">testDetectaAdulteracionDeImporte</span>(): <span class="token-keyword">void</span> 
+{
+    $xmlFirmado = <span class="token-keyword">$this</span>->firmador-><span class="token-method">firmar</span>($xmlOriginal);
+
+    <span class="token-comment">// ATAQUE: Alteramos el importe ya timbrado</span>
+    $xmlAdulterado = str_replace(
+        <span class="token-string">'1180.00'</span>, 
+        <span class="token-string">'10.00'</span>, 
+        $xmlFirmado
+    );
+
+    <span class="token-comment">// Evaluamos la respuesta del simulador de SUNAT</span>
+    $cdr = <span class="token-keyword">$this</span>->sunatSimulator-><span class="token-method">validarXml</span>($xmlAdulterado);
+
+    <span class="token-keyword">$this</span>-><span class="token-method">assertFalse</span>($cdr->esAceptado());
+    <span class="token-keyword">$this</span>-><span class="token-method">assertSame</span>(<span class="token-num">2335</span>, $cdr->codigoRespuesta);
+    <span class="token-keyword">$this</span>-><span class="token-method">assertStringContainsString</span>(
+        <span class="token-string">'El digest no coincide'</span>, $cdr->observaciones
+    );
+}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-footer">
+            <div>Testing y Calidad de Software &bull; Sistema de Facturación Electrónica</div>
+            <div class="slide-num">Slide 12 / 18</div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SLIDE 13: CASO 5: IDEMPOTENCIA Y CONCURRENCIA -->
+    <!-- ========================================== -->
+    <div class="slide">
+        <div class="slide-header">
+            <div>
+                <div class="slide-category">Caso de Estudio 5 &bull; Persistencia e Idempotencia</div>
+                <div class="slide-title">12. Prevención de Doble Emisión por Concurrencia</div>
+            </div>
+            <div class="slide-badge">Anti-Doble Clic</div>
+        </div>
+
+        <div class="slide-body">
+            <div style="flex: 0.95; display: flex; flex-direction: column; gap: 16px;">
+                <div class="card">
+                    <div class="card-title">⚡ El Escenario del Doble Clic del Cajero</div>
+                    <p style="font-size: 14px; margin-bottom: 12px;">
+                        Si la cajera da doble clic por error al botón "Emitir Factura" o si la conexión parpadea:
+                    </p>
+                    <ul>
+                        <li>Un sistema sin idempotencia crearía dos facturas con números distintos y cobraría el doble.</li>
+                        <li>Nuestro sistema usa la tabla <span class="font-mono">idempotency_keys</span> con ciclo:
+                            <br><span class="font-mono">IN_PROGRESS &rarr; COMPLETED</span></li>
+                        <li>El segundo intento detecta la clave y <strong>retorna la respuesta original en caché</strong> sin crear comprobantes duplicados.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="flex: 1.25; height: 100%;">
+                <div class="mac-window">
+                    <div class="mac-titlebar">
+                        <div class="mac-dots"><div class="mac-dot dot-red"></div><div class="mac-dot dot-yellow"></div><div class="mac-dot dot-green"></div></div>
+                        <div class="mac-filename">SqlitePersistenceIntegrationTest.php</div>
+                    </div>
+                    <div class="mac-code"><span class="token-keyword">public function</span> <span class="token-method">testTablaIdempotenciaPrevieneDobleEmision</span>(): <span class="token-keyword">void</span> 
+{
+    $key = <span class="token-string">'uuid-cajero-terminal-01'</span>;
+
+    <span class="token-comment">// Intento 1: Emisión exitosa</span>
+    $res1 = <span class="token-keyword">$this</span>->service-><span class="token-method">emitirConIdempotencia</span>($key, $orden);
+
+    <span class="token-comment">// Intento 2: Inmediato con la misma clave UUID</span>
+    $res2 = <span class="token-keyword">$this</span>->service-><span class="token-method">emitirConIdempotencia</span>($key, $orden);
+
+    <span class="token-comment">// Las respuestas son identicas</span>
+    <span class="token-keyword">$this</span>-><span class="token-method">assertSame</span>($res1->correlativo, $res2->correlativo);
+
+    <span class="token-comment">// La base de datos solo almaceno 1 comprobante</span>
+    $count = <span class="token-keyword">$this</span>->db-><span class="token-method">query</span>(<span class="token-string">"SELECT count(*) FROM comprobantes"</span>)->fetchColumn();
+    <span class="token-keyword">$this</span>-><span class="token-method">assertSame</span>(<span class="token-num">1</span>, (<span class="token-keyword">int</span>) $count);
+}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-footer">
+            <div>Testing y Calidad de Software &bull; Sistema de Facturación Electrónica</div>
+            <div class="slide-num">Slide 13 / 18</div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SLIDE 14: CASO 6: ROLLBACK DE KARDEX CON MOCKS -->
+    <!-- ========================================== -->
+    <div class="slide">
+        <div class="slide-header">
+            <div>
+                <div class="slide-category">Caso de Estudio 6 &bull; Feature Tests y Mocks</div>
+                <div class="slide-title">13. Resiliencia: Rollback Automático de Kardex ante Rechazo</div>
+            </div>
+            <div class="slide-badge">Invariante Transaccional</div>
+        </div>
+
+        <div class="slide-body">
+            <div style="flex: 0.95; display: flex; flex-direction: column; gap: 16px;">
+                <div class="card">
+                    <div class="card-title">📦 Protección de Stock ante SUNAT</div>
+                    <p style="font-size: 14px; margin-bottom: 12px;">
+                        Al emitir una factura, el sistema reserva el inventario. Pero ¿qué ocurre si SUNAT responde que el RUC del cliente está <strong>de baja de oficio (Código 2800)</strong>?
+                    </p>
+                    <ul>
+                        <li>La factura no puede tener validez fiscal.</li>
+                        <li>El caso de uso debe realizar un <strong>Rollback atómico</strong> en el Kardex.</li>
+                        <li>Las 15 laptops reservadas regresan de inmediato al almacén, evitando pérdidas de mercadería.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="flex: 1.25; height: 100%;">
+                <div class="mac-window">
+                    <div class="mac-titlebar">
+                        <div class="mac-dots"><div class="mac-dot dot-red"></div><div class="mac-dot dot-yellow"></div><div class="mac-dot dot-green"></div></div>
+                        <div class="mac-filename">FacturacionElectronicaMocksFeatureTest.php</div>
+                    </div>
+                    <div class="mac-code"><span class="token-keyword">public function</span> <span class="token-method">testRevierteElStockAutomaticamenteSiSunatRechaza</span>(): <span class="token-keyword">void</span> 
+{
+    <span class="token-comment">// Mock de SUNAT simulando Rechazo 2800 (RUC de baja)</span>
+    <span class="token-keyword">$this</span>->sunatMock-><span class="token-method">method</span>(<span class="token-string">'enviarComprobante'</span>)
+                    -><span class="token-method">willReturn</span>(<span class="token-keyword">new</span> <span class="token-class">CdrResponse</span>(codigo: <span class="token-num">2800</span>));
+
+    <span class="token-comment">// Stock inicial: 15 laptops</span>
+    <span class="token-keyword">$this</span>-><span class="token-method">assertSame</span>(<span class="token-num">15</span>, <span class="token-keyword">$this</span>->kardex-><span class="token-method">obtenerStock</span>(<span class="token-string">'LAPT-LEN-01'</span>));
+
+    <span class="token-comment">// Ejecutamos la emision (falla en SUNAT)</span>
+    <span class="token-keyword">$this</span>->service-><span class="token-method">emitirFactura</span>($pedidoDe5Laptops);
+
+    <span class="token-comment">// Invariante: El stock se restauro a sus 15 unidades</span>
+    <span class="token-keyword">$this</span>-><span class="token-method">assertSame</span>(<span class="token-num">15</span>, <span class="token-keyword">$this</span>->kardex-><span class="token-method">obtenerStock</span>(<span class="token-string">'LAPT-LEN-01'</span>));
+}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-footer">
+            <div>Testing y Calidad de Software &bull; Sistema de Facturación Electrónica</div>
+            <div class="slide-num">Slide 14 / 18</div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SLIDE 15: EVIDENCIA EN VIVO: FACTURADOR Y KARDEX -->
+    <!-- ========================================== -->
+    <div class="slide">
+        <div class="slide-header">
+            <div>
+                <div class="slide-category">Dossier de Evidencias en Vivo</div>
+                <div class="slide-title">14. Interfaz en Ejecución: Facturador Principal y Kardex</div>
+            </div>
+            <div class="slide-badge">React + Vite &bull; localhost:5173</div>
+        </div>
+
+        <div class="slide-body">
+            <div style="flex: 1; height: 100%;">
+                <div class="img-container">
+                    <img src="file:///D:/Escritorio/redobia-web/Billing/capturas/01_app_facturador.png" alt="Facturador Principal">
+                    <div class="img-caption"><strong>Figura 1:</strong> Formulario de emisión en vivo con cálculo de IGV 18%, ICBPER y validación de RUC de cliente.</div>
+                </div>
+            </div>
+            <div style="flex: 1; height: 100%;">
+                <div class="img-container">
+                    <img src="file:///D:/Escritorio/redobia-web/Billing/capturas/02_catalogo_kardex_stock.png" alt="Kardex de Inventario">
+                    <div class="img-caption"><strong>Figura 2:</strong> Catálogo de productos con afectaciones tributarias (10, 20, 30) y decremento atómico de stock.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-footer">
+            <div>Testing y Calidad de Software &bull; Sistema de Facturación Electrónica</div>
+            <div class="slide-num">Slide 15 / 18</div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SLIDE 16: EVIDENCIA EN VIVO: HISTORIAL Y VISOR XML -->
+    <!-- ========================================== -->
+    <div class="slide">
+        <div class="slide-header">
+            <div>
+                <div class="slide-category">Dossier de Evidencias en Vivo</div>
+                <div class="slide-title">15. Trazabilidad Fiscal: Historial, Visor UBL 2.1 y Anulación</div>
+            </div>
+            <div class="slide-badge">Estándar OASIS UBL 2.1</div>
+        </div>
+
+        <div class="slide-body">
+            <div style="flex: 1; height: 100%;">
+                <div class="img-container">
+                    <img src="file:///D:/Escritorio/redobia-web/Billing/capturas/03_historial_comprobantes_acciones.png" alt="Historial">
+                    <div class="img-caption"><strong>Figura 3:</strong> Bandeja de comprobantes emitidos con hash SHA-256 y estados de aceptación.</div>
+                </div>
+            </div>
+            <div style="flex: 1; height: 100%;">
+                <div class="img-container">
+                    <img src="file:///D:/Escritorio/redobia-web/Billing/capturas/04_visor_xml_ubl21.png" alt="Visor XML">
+                    <div class="img-caption"><strong>Figura 4:</strong> Modal interactivo con inspección de nodos XML y firma digital <span class="font-mono">&lt;ds:Signature&gt;</span>.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-footer">
+            <div>Testing y Calidad de Software &bull; Sistema de Facturación Electrónica</div>
+            <div class="slide-num">Slide 16 / 18</div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SLIDE 17: EVIDENCIA EN VIVO: TERMINAL CLI   -->
+    <!-- ========================================== -->
+    <div class="slide">
+        <div class="slide-header">
+            <div>
+                <div class="slide-category">Evidencia Oficial de Auditoría</div>
+                <div class="slide-title">16. Salida Íntegra de Terminal PowerShell: PHPUnit 10.5</div>
+            </div>
+            <div class="slide-badge">140 Aserciones Verificadas</div>
+        </div>
+
+        <div class="slide-body">
+            <div style="flex: 1.3; height: 100%;">
+                <div class="img-container" style="background-color: #020617; border-color: rgba(56, 189, 248, 0.3);">
+                    <img src="file:///D:/Escritorio/redobia-web/Billing/capturas/07_terminal_phpunit_completo.png" alt="Terminal CLI" style="max-height: 540px;">
+                    <div class="img-caption"><strong>Figura 7:</strong> Ejecución del comando <span class="font-mono">vendor/bin/phpunit --testdox</span>. 39 tests aprobados en 0.21 segundos.</div>
+                </div>
+            </div>
+
+            <div style="flex: 0.7; display: flex; flex-direction: column; gap: 16px;">
+                <div class="card" style="border-left: 4px solid #34d399;">
+                    <div style="font-weight: 700; color: #34d399; font-size: 16px; margin-bottom: 6px;">Cero Fallos / Cero Riesgos</div>
+                    <p style="font-size: 14px;">La bandera <span class="font-mono">failOnWarning="true"</span> y <span class="font-mono">failOnRisky="true"</span> garantiza que ningún test tenga fugas de aserciones o salidas no controladas.</p>
+                </div>
+                <div class="card" style="border-left: 4px solid #38bdf8;">
+                    <div style="font-weight: 700; color: #38bdf8; font-size: 16px; margin-bottom: 6px;">Consola Web Integrada</div>
+                    <p style="font-size: 14px;">El frontend cuenta con un botón para re-ejecutar la suite completa o por capas (Unit, Integration, Feature) con 1 solo clic.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-footer">
+            <div>Testing y Calidad de Software &bull; Sistema de Facturación Electrónica</div>
+            <div class="slide-num">Slide 17 / 18</div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SLIDE 18: CONCLUSIONES Y CERTIFICACIÓN      -->
+    <!-- ========================================== -->
+    <div class="slide">
+        <div class="slide-header">
+            <div>
+                <div class="slide-category">Dictamen Final de Calidad</div>
+                <div class="slide-title">17. Conclusiones y Certificación de Software</div>
+            </div>
+            <div class="slide-badge">Aprobado Satisfactoriamente</div>
+        </div>
+
+        <div class="slide-body">
+            <div class="card" style="flex: 1.1;">
+                <div class="card-title">🎓 Conclusiones de Ingeniería de QA</div>
+                <ul>
+                    <li><strong>Arquitectura Hexagonal como Facilitador:</strong> La separación estricta entre Dominio e Infraestructura permitió testear el 100% de las reglas fiscales sin depender de SUNAT.</li>
+                    <li><strong>Persistencia In-Memory Ultraveloz:</strong> Redujo el tiempo de ejecución a 0.21 segundos, permitiendo ejecutar pruebas continuas antes de cada commit.</li>
+                    <li><strong>Seguridad Comprobada:</strong> El Tamper Test y la tabla de Idempotencia garantizan inmunidad contra fraudes y contra pagos duplicados por intermitencias de red.</li>
+                </ul>
+            </div>
+
+            <div class="card" style="flex: 0.9; border: 2px solid #38bdf8; background-color: rgba(15, 23, 42, 0.95); text-align: center; display: flex; flex-direction: column; justify-content: center;">
+                <div style="font-size: 14px; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">
+                    Acta Oficial de Certificación de Pruebas
+                </div>
+                <div style="font-size: 28px; font-weight: 800; color: #34d399; margin-bottom: 12px;">
+                    100% COBERTURA CRÍTICA
+                </div>
+                <p style="font-size: 13px; color: #94a3b8; margin-bottom: 20px;">
+                    Sistema certificado bajo la normativa de SUNAT Resolución 097-2012 y el estándar internacional OASIS UBL 2.1.
+                </p>
+                <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px; font-size: 12px; color: #cbd5e1;">
+                    <strong>Equipo de Calidad:</strong> Apolinario, Umeres, Vasquez, Ventocilla<br>
+                    <span style="color: #38bdf8;">github.com/fujimor1/Billing.git</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-footer">
+            <div>Testing y Calidad de Software &bull; Sistema de Facturación Electrónica</div>
+            <div class="slide-num">Slide 18 / 18</div>
+        </div>
+    </div>
+
+
+    <!-- Controles de Presentación Flotantes -->
+    <div class="floating-nav" id="deck-nav">
+        <button class="nav-btn" onclick="prevSlide()" title="Anterior (Flecha Izquierda / Backspace)">◀ Anterior</button>
+        <span class="nav-counter" id="slide-indicator">Diapositiva <strong>1</strong> / 18</span>
+        <button class="nav-btn" onclick="nextSlide()" title="Siguiente (Flecha Derecha / Espacio)">Siguiente ▶</button>
+        <span style="color: rgba(255,255,255,0.2);">|</span>
+        <button class="nav-btn" onclick="toggleFullscreen()" title="Pantalla Completa (F)">⛶ Pantalla Completa</button>
+        <button class="nav-btn" onclick="toggleViewMode()" id="view-mode-btn" title="Alternar Vista">Modo Lista</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        let isDeckMode = true;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const indicator = document.getElementById('slide-indicator');
+        const viewModeBtn = document.getElementById('view-mode-btn');
+
+        // Wrap slides in a scalable container
+        const wrapper = document.createElement('div');
+        wrapper.className = 'slide-wrapper';
+        wrapper.id = 'slide-wrapper';
+        document.body.classList.add('deck-mode');
+
+        // Move slides into wrapper
+        slides.forEach((s, idx) => {
+            s.setAttribute('data-index', idx);
+            wrapper.appendChild(s);
+        });
+        document.body.prepend(wrapper);
+
+        function updateSlide() {
+            if (!isDeckMode) return;
+            slides.forEach((s, idx) => {
+                if (idx === currentSlide) {
+                    s.classList.add('active-slide');
+                } else {
+                    s.classList.remove('active-slide');
+                }
+            });
+            indicator.innerHTML = `Diapositiva <strong>${currentSlide + 1}</strong> / ${totalSlides}`;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlide();
+            }
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {});
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        function toggleViewMode() {
+            isDeckMode = !isDeckMode;
+            if (isDeckMode) {
+                document.body.classList.add('deck-mode');
+                viewModeBtn.innerText = 'Modo Lista';
+                fitToScreen();
+                updateSlide();
+            } else {
+                document.body.classList.remove('deck-mode');
+                wrapper.style.transform = 'none';
+                slides.forEach(s => s.classList.add('active-slide'));
+                viewModeBtn.innerText = 'Modo Presentación';
+            }
+        }
+
+        function fitToScreen() {
+            if (!isDeckMode) return;
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            const scaleX = w / 1920;
+            const scaleY = h / 1080;
+            const scale = Math.min(scaleX, scaleY) * 0.98;
+            wrapper.style.transform = `scale(${scale})`;
+        }
+
+        window.addEventListener('resize', fitToScreen);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'Backspace' || e.key === 'PageUp') {
+                e.preventDefault();
+                prevSlide();
+            } else if (e.key === 'f' || e.key === 'F') {
+                toggleFullscreen();
+            } else if (e.key === 'Home') {
+                currentSlide = 0;
+                updateSlide();
+            } else if (e.key === 'End') {
+                currentSlide = totalSlides - 1;
+                updateSlide();
+            }
+        });
+
+        // Initialize
+        fitToScreen();
+        updateSlide();
+    </script>
+
+</body>
+</html>

@@ -2,13 +2,21 @@
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage[spanish,es-tabla]{babel}
+\usepackage[spanish,es-noshorthands,es-tabla]{babel}
 \usepackage{graphicx}
+\graphicspath{{capturas/}{capturas/}}
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{tikz}
 \usepackage{tcolorbox}
 \tcbuselibrary{skins,listings}
+
+\tcbset{
+    colupper=textwhite,
+    collower=textwhite,
+    boxrule=0mm,
+    fontupper=\fontsize{7.2pt}{9pt}\selectfont\color{textwhite}
+}
 
 % Colores de la paleta Obsidian & Blue Pro (Estilo Anti-AI Profesional)
 \definecolor{bgdark}{HTML}{0B1120}
@@ -127,7 +135,7 @@
 \begin{columns}
 \begin{column}{0.5\textwidth}
     \begin{tcolorbox}[colback=cardbg, colframe=cardbg, arc=3mm, title=\color{accentblue}\bfseries El Estándar de la Industria]
-        \fontsize{7.2pt}{9pt}\selectfont
+        \fontsize{7.2pt}{9pt}\selectfont\color{textwhite}
         \textbf{PHPUnit} es el framework de pruebas de facto en el ecosistema PHP, desarrollado por Sebastian Bergmann.
         \begin{itemize}
             \item \textbf{PHPUnit 10.5:} Diseñado para PHP 8.2+, incorpora tipado estricto sin coerción débil.
@@ -138,7 +146,7 @@
 \end{column}
 \begin{column}{0.5\textwidth}
     \begin{tcolorbox}[colback=cardbg, colframe=cardbg, arc=3mm, title=\color{accentgreen}\bfseries Arquitectura del Runner]
-        \fontsize{7.2pt}{9pt}\selectfont
+        \fontsize{7.2pt}{9pt}\selectfont\color{textwhite}
         \begin{itemize}
             \item \textbf{Jerarquía de Suites:} Separa pruebas por velocidad y aislamiento (Unit, Integration, Feature).
             \item \textbf{Motor de Aserciones:} Más de 80 aserciones nativas para validar estados y tipos estrictos.
@@ -155,7 +163,7 @@
 \begin{frame}[fragile]{2. El Ciclo de Vida de las Pruebas (Test Lifecycle)}
 \begin{columns}
 \begin{column}{0.5\textwidth}
-    \fontsize{7.2pt}{9pt}\selectfont
+    \fontsize{7.2pt}{9pt}\selectfont\color{textwhite}
     Para garantizar que cada prueba sea \textbf{independiente y aislada}, PHPUnit implementa métodos de enganche (\textit{lifecycle hooks}):
     \vspace{0.15cm}
     \begin{enumerate}
@@ -199,7 +207,7 @@ protected function tearDown(): void
 \begin{frame}[fragile]{3. Atributos de PHP 8 (Decoradores): \#[DataProvider]}
 \begin{columns}
 \begin{column}{0.44\textwidth}
-    \fontsize{7.2pt}{9pt}\selectfont
+    \fontsize{7.2pt}{9pt}\selectfont\color{textwhite}
     \textbf{Pruebas Parametrizadas Elegantes:}\\[0.1cm]
     En versiones antiguas se usaban anotaciones en comentarios (\texttt{@dataProvider}). En PHPUnit 10 usamos los \textbf{atributos nativos de PHP 8}:
     \vspace{0.15cm}
@@ -243,7 +251,7 @@ public static function proveedorRucsValidos(): array
 \begin{columns}
 \begin{column}{0.48\textwidth}
     \begin{tcolorbox}[colback=cardbg, colframe=cardbg, arc=3mm, title=\color{accentamber}\bfseries ¡Cuidado con la Igualdad Débil!]
-        \fontsize{6.8pt}{8.5pt}\selectfont
+        \fontsize{6.8pt}{8.5pt}\selectfont\color{textwhite}
         \begin{itemize}
             \item \textbf{assertEquals(\$a, \$b):} Usa comparación débil (\texttt{==}). En PHP, \texttt{"100" == 100} da verdadero. En facturación esto puede ocultar bugs de tipado.
             \item \textbf{assertSame(\$a, \$b):} Usa identidad estricta (\texttt{===}). Comprueba que el valor y el tipo de dato sean exactamente iguales (\texttt{float} con \texttt{float}).
@@ -251,7 +259,7 @@ public static function proveedorRucsValidos(): array
     \end{tcolorbox}
     \vspace{0.1cm}
     \begin{tcolorbox}[colback=cardbg, colframe=cardbg, arc=3mm, title=\color{accentblue}\bfseries Aserciones Críticas de Excepción]
-        \fontsize{6.8pt}{8.5pt}\selectfont
+        \fontsize{6.8pt}{8.5pt}\selectfont\color{textwhite}
         \textbf{expectException(Clase::class):} Comprueba que el sistema rechace operaciones inválidas lanzando excepciones de dominio específicas.
     \end{tcolorbox}
 \end{column}
@@ -288,7 +296,7 @@ public function testImpideFacturaAClienteConDni(): void
 \begin{frame}[fragile]{5. Dobles de Prueba: Mocks y Spies de SUNAT}
 \begin{columns}
 \begin{column}{0.48\textwidth}
-    \fontsize{7.2pt}{9pt}\selectfont
+    \fontsize{7.2pt}{9pt}\selectfont\color{textwhite}
     \textbf{¿Por qué no llamamos al Web Service real de SUNAT?}\\[0.1cm]
     \begin{itemize}
         \item Los servidores del Estado sufren caídas de red frecuentes.
@@ -346,20 +354,20 @@ public function testNoLlamaASunatSiNoHayStock(): void
         \draw[fill=accentamber!20, draw=accentamber, thick] (2,2.4) -- (4,2.4) -- (3,3.6) -- cycle;
 
         % Etiquetas
-        \node[font=\fontsize{7pt}{8pt}\selectfont\bfseries] at (3,0.6) {26 Pruebas Unitarias (67\%)};
-        \node[font=\fontsize{6pt}{7pt}\selectfont] at (3,0.2) {Dominio, RUC Módulo 11, Impuestos};
+        \node[font=\fontsize{7pt}{8pt}\selectfont\color{textwhite}\bfseries] at (3,0.6) {26 Pruebas Unitarias (67\%)};
+        \node[font=\fontsize{6pt}{7pt}\selectfont\color{textwhite}] at (3,0.2) {Dominio, RUC Módulo 11, Impuestos};
 
-        \node[font=\fontsize{7pt}{8pt}\selectfont\bfseries] at (3,1.8) {7 Pruebas Integración (18\%)};
-        \node[font=\fontsize{6pt}{7pt}\selectfont] at (3,1.4) {UBL 2.1, SHA-256, SQLite, Idempotencia};
+        \node[font=\fontsize{7pt}{8pt}\selectfont\color{textwhite}\bfseries] at (3,1.8) {7 Pruebas Integración (18\%)};
+        \node[font=\fontsize{6pt}{7pt}\selectfont\color{textwhite}] at (3,1.4) {UBL 2.1, SHA-256, SQLite, Idempotencia};
 
-        \node[font=\fontsize{7pt}{8pt}\selectfont\bfseries] at (3,2.9) {6 Feature (15\%)};
-        \node[font=\fontsize{6pt}{7pt}\selectfont] at (3,2.6) {Mocks SUNAT y Rollback};
+        \node[font=\fontsize{7pt}{8pt}\selectfont\color{textwhite}\bfseries] at (3,2.9) {6 Feature (15\%)};
+        \node[font=\fontsize{6pt}{7pt}\selectfont\color{textwhite}] at (3,2.6) {Mocks SUNAT y Rollback};
     \end{tikzpicture}
     \end{center}
 \end{column}
 \begin{column}{0.5\textwidth}
     \begin{tcolorbox}[colback=cardbg, colframe=cardbg, arc=3mm, title=\color{accentgreen}\bfseries Métricas Oficiales de Ejecución]
-        \fontsize{7.2pt}{9pt}\selectfont
+        \fontsize{7.2pt}{9pt}\selectfont\color{textwhite}
         \begin{itemize}
             \item \textbf{Total de Pruebas:} 39 casos de prueba.
             \item \textbf{Aserciones Evaluadas:} 140 aserciones estrictas.
@@ -378,7 +386,7 @@ public function testNoLlamaASunatSiNoHayStock(): void
 \begin{frame}[fragile]{7. Caso de Prueba 1: Algoritmo SUNAT Módulo 11 en Value Object Ruc}
 \begin{columns}
 \begin{column}{0.48\textwidth}
-    \fontsize{7.2pt}{9pt}\selectfont
+    \fontsize{7.2pt}{9pt}\selectfont\color{textwhite}
     \textbf{Fórmula Oficial de Ponderación:}\\[0.1cm]
     SUNAT valida el RUC aplicando los factores:
     $$\vec{F} = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2]$$
@@ -424,7 +432,7 @@ private function validarModulo11(string $ruc): void
 \begin{frame}[fragile]{8. Caso de Prueba 2: Liquidación Tributaria Mixta Compleja}
 \begin{columns}
 \begin{column}{0.48\textwidth}
-    \fontsize{7.2pt}{9pt}\selectfont
+    \fontsize{7.2pt}{9pt}\selectfont\color{textwhite}
     \textbf{Regla Tributaria Multirégimen:}\\[0.1cm]
     En Perú, una misma factura puede incluir:
     \begin{itemize}
@@ -467,7 +475,7 @@ public function testCalculaComprobanteMixto(): void
 \begin{frame}[fragile]{9. Caso de Prueba 3: Seguridad Criptográfica (Tamper Test)}
 \begin{columns}
 \begin{column}{0.48\textwidth}
-    \fontsize{7.2pt}{9pt}\selectfont
+    \fontsize{7.2pt}{9pt}\selectfont\color{textwhite}
     \textbf{Ataque de Alteración de Montos:}\\[0.1cm]
     Simulamos un atacante que intercepta la factura XML ya firmada digitalmente con SHA-256 y cambia el monto de \textbf{S/ 1,180.00} a \textbf{S/ 10.00}:
     \vspace{0.15cm}
@@ -513,7 +521,7 @@ public function testDetectaAdulteracionDeImporte(): void
 \begin{frame}[fragile]{10. Caso de Prueba 4: Persistencia e Idempotencia (Doble Clic)}
 \begin{columns}
 \begin{column}{0.48\textwidth}
-    \fontsize{7.2pt}{9pt}\selectfont
+    \fontsize{7.2pt}{9pt}\selectfont\color{textwhite}
     \textbf{El Problema del Doble Clic del Cajero:}\\[0.1cm]
     Si el operador de caja pulsa dos veces seguidas el botón "Cobrar" o se interrumpe la red:
     \vspace{0.15cm}
@@ -561,13 +569,13 @@ public function testTablaIdempotenciaPrevieneDobleEmision(): void
 \begin{columns}
 \begin{column}{0.5\textwidth}
     \begin{center}
-        \includegraphics[width=0.98\textwidth,height=4.8cm,keepaspectratio]{Billing/capturas/01_app_facturador.png}\\[0.1cm]
+        \includegraphics[width=0.98\textwidth,height=4.8cm,keepaspectratio]{capturas/01_app_facturador.png}\\[0.1cm]
         {\fontsize{6.5pt}{7.5pt}\selectfont\color{accentblue}\textbf{Figura 1:} Emisión en tiempo real en \texttt{localhost:5173}}
     \end{center}
 \end{column}
 \begin{column}{0.5\textwidth}
     \begin{center}
-        \includegraphics[width=0.98\textwidth,height=4.8cm,keepaspectratio]{Billing/capturas/02_catalogo_kardex_stock.png}\\[0.1cm]
+        \includegraphics[width=0.98\textwidth,height=4.8cm,keepaspectratio]{capturas/02_catalogo_kardex_stock.png}\\[0.1cm]
         {\fontsize{6.5pt}{7.5pt}\selectfont\color{accentgreen}\textbf{Figura 2:} Catálogo de 9 productos y Kardex atómico}
     \end{center}
 \end{column}
@@ -581,13 +589,13 @@ public function testTablaIdempotenciaPrevieneDobleEmision(): void
 \begin{columns}
 \begin{column}{0.5\textwidth}
     \begin{center}
-        \includegraphics[width=0.98\textwidth,height=4.8cm,keepaspectratio]{Billing/capturas/03_historial_comprobantes_acciones.png}\\[0.1cm]
+        \includegraphics[width=0.98\textwidth,height=4.8cm,keepaspectratio]{capturas/03_historial_comprobantes_acciones.png}\\[0.1cm]
         {\fontsize{6.5pt}{7.5pt}\selectfont\color{accentblue}\textbf{Figura 3:} Bandeja fiscal con hash SHA-256}
     \end{center}
 \end{column}
 \begin{column}{0.5\textwidth}
     \begin{center}
-        \includegraphics[width=0.98\textwidth,height=4.8cm,keepaspectratio]{Billing/capturas/04_visor_xml_ubl21.png}\\[0.1cm]
+        \includegraphics[width=0.98\textwidth,height=4.8cm,keepaspectratio]{capturas/04_visor_xml_ubl21.png}\\[0.1cm]
         {\fontsize{6.5pt}{7.5pt}\selectfont\color{accentgreen}\textbf{Figura 4:} Visor del XML estructurado con firma digital}
     \end{center}
 \end{column}
@@ -599,7 +607,7 @@ public function testTablaIdempotenciaPrevieneDobleEmision(): void
 % ==========================================
 \begin{frame}{13. Evidencia Oficial: Salida Íntegra de Terminal PHPUnit 10.5}
 \begin{center}
-    \includegraphics[width=0.92\textwidth,height=5.2cm,keepaspectratio]{Billing/capturas/07_terminal_phpunit_completo.png}\\[0.15cm]
+    \includegraphics[width=0.92\textwidth,height=5.2cm,keepaspectratio]{capturas/07_terminal_phpunit_completo.png}\\[0.15cm]
     {\fontsize{7.5pt}{8.5pt}\selectfont\color{accentgreen}\textbf{Figura 7:} 39 Tests en Verde $\bullet$ 140 Aserciones Auditadas $\bullet$ 0.21 segundos en RAM}
 \end{center}
 \end{frame}
@@ -611,7 +619,7 @@ public function testTablaIdempotenciaPrevieneDobleEmision(): void
 \begin{columns}
 \begin{column}{0.5\textwidth}
     \begin{tcolorbox}[colback=cardbg, colframe=cardbg, arc=3mm, title=\color{accentblue}\bfseries Aportes de PHPUnit 10 al Proyecto]
-        \fontsize{7.2pt}{9pt}\selectfont
+        \fontsize{7.2pt}{9pt}\selectfont\color{textwhite}
         \begin{itemize}
             \item \textbf{Aislamiento Absoluto:} SQLite \texttt{:memory:} permite ejecutar 39 pruebas en 0.21 segundos sin contaminar disco ni bases de datos de producción.
             \item \textbf{Cero Dependencia de Red:} Los Mocks y Spies permiten simular caídas HTTP 504 y rechazos tributarios 2800 de SUNAT de forma 100\% controlada.
@@ -621,7 +629,7 @@ public function testTablaIdempotenciaPrevieneDobleEmision(): void
 \end{column}
 \begin{column}{0.5\textwidth}
     \begin{tcolorbox}[colback=cardbg, colframe=cardbg, arc=3mm, title=\color{accentgreen}\bfseries Certificación de Calidad]
-        \fontsize{7.2pt}{9pt}\selectfont
+        \fontsize{7.2pt}{9pt}\selectfont\color{textwhite}
         \begin{itemize}
             \item \textbf{Tasa de Aprobación:} 100\% (39/39 pruebas).
             \item \textbf{Aserciones Cumplidas:} 140/140 verificadas.
