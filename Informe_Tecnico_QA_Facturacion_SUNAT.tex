@@ -1,7 +1,10 @@
 \documentclass[11pt,a4paper]{article}
 
-% --- PAQUETES FUNDAMENTALES ---
-\usepackage[utf8]{inputenc}
+% --- PAQUETES TIPOGRÁFICOS MODERNOS (ARIAL AUTÉNTICA) ---
+\usepackage{fontspec}
+\setmainfont{Arial}
+\setmonofont[Scale=0.88]{Consolas}
+
 \usepackage[spanish,es-tabla]{babel}
 \usepackage[margin=2.5cm,top=2.4cm,bottom=2.4cm]{geometry}
 \usepackage{amsmath,amssymb}
@@ -13,31 +16,29 @@
 \usepackage{titlesec}
 \usepackage{enumitem}
 \usepackage{lastpage}
-\usepackage{microtype}
+\usepackage{graphicx}
 \usepackage{caption}
+\usepackage{setspace}
+\setstretch{1.15}
 
-% --- ESTILO MONOCROMÁTICO ESTRICTO (CERO COLORES) ---
-% Se fuerza documento en blanco y negro puro / escala de grises académica
-\usepackage[monochrome]{xcolor}
-
-% --- CONFIGURACIÓN DE PÁGINA Y ENCABEZADOS ---
+% --- CONFIGURACIÓN DE PÁGINA Y ENCABEZADOS FORMALES ---
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\small \textit{Informe Técnico: QA \& Automatización con PHPUnit 10.5}}
-\fancyhead[R]{\small \textit{SUNAT UBL 2.1}}
-\fancyfoot[L]{\small \textit{Facultad de Ingeniería de Sistemas -- UNI}}
+\fancyhead[L]{\small \textit{UNTELS -- Ingeniería de Sistemas | QA \& Automatización}}
+\fancyhead[R]{\small \textit{Facturación SUNAT UBL 2.1}}
+\fancyfoot[L]{\small \textit{Informe Técnico de Calidad de Software}}
 \fancyfoot[R]{\small Página \thepage\ de \pageref{LastPage}}
 \renewcommand{\headrulewidth}{0.5pt}
 \renewcommand{\footrulewidth}{0.4pt}
 
-% --- CONFIGURACIÓN DE TÍTULOS ---
-\titleformat{\section}{\large\bfseries}{\thesection.}{0.8em}{}[\titlerule]
-\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.6em}{}
+% --- FORMATO DE TÍTULOS (ESTILO INFORME UNIVERSITARIO UNTELS) ---
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.6em}{}[\titlerule]
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.5em}{}
 \titleformat{\subsubsection}{\small\bfseries}{\thesubsubsection.}{0.5em}{}
-\titlespacing*{\section}{0pt}{1.3ex plus 0.4ex minus 0.2ex}{0.8ex plus 0.2ex}
-\titlespacing*{\subsection}{0pt}{1.1ex plus 0.3ex minus 0.2ex}{0.6ex}
+\titlespacing*{\section}{0pt}{1.3ex plus 0.4ex minus 0.2ex}{0.7ex plus 0.2ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.3ex minus 0.2ex}{0.5ex}
 
-% --- CONFIGURACIÓN DE LISTINGS (CÓDIGO FUENTE MONOCROMO) ---
+% --- LISTINGS PARA CÓDIGO FUENTE (ESTILO FORMAL MONOCROMO) ---
 \lstset{
     basicstyle=\ttfamily\footnotesize,
     numbers=left,
@@ -54,149 +55,152 @@
     commentstyle=\itshape,
     stringstyle=\textrm,
     captionpos=b,
-    xleftmargin=15pt,
-    framexleftmargin=15pt,
-    inputencoding=utf8,
-    extendedchars=true
+    xleftmargin=12pt,
+    framexleftmargin=12pt
 }
 
 % --- SEPARACIÓN ENTRE PÁRRAFOS ---
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{0.6em plus 0.15em minus 0.1em}
+\setlength{\parskip}{0.55em plus 0.15em minus 0.1em}
 
 \begin{document}
 
 % ==============================================================================
-% PORTADA ACADÉMICA FORMAL (UNIVERSIDAD NACIONAL DE INGENIERÍA)
+% PORTADA OFICIAL UNTELS (UNIVERSIDAD NACIONAL TECNOLÓGICA DE LIMA SUR)
 % ==============================================================================
 \begin{titlepage}
     \centering
-    \vspace*{1.0cm}
+    \vspace*{0.2cm}
     
-    {\Large \textbf{UNIVERSIDAD NACIONAL DE INGENIERÍA}}\\[0.3cm]
-    {\large \textbf{FACULTAD DE INGENIERÍA DE SISTEMAS}}\\[0.2cm]
-    {\small DEPARTAMENTO ACADÉMICO DE INGENIERÍA DE SOFTWARE Y SISTEMAS}\\[1.5cm]
+    {\Large \textbf{UNIVERSIDAD NACIONAL TECNOLÓGICA DE LIMA SUR}}\\[0.2cm]
+    {\large \textbf{UNTELS}}\\[0.2cm]
+    {\normalsize \textbf{FACULTAD DE INGENIERÍA Y GESTIÓN}}\\[0.15cm]
+    {\normalsize \textbf{CARRERA PROFESIONAL DE INGENIERÍA DE SISTEMAS}}\\[0.8cm]
     
-    \hrule height 1.5pt
-    \vspace{0.6cm}
-    {\Large \textbf{INFORME TÉCNICO DE INGENIERÍA DE CALIDAD}}\\[0.4cm]
-    {\large \textbf{Diseño, Implementación y Verificación Formal de la Suite de Automatización de Pruebas con PHPUnit 10.5}}\\[0.3cm]
-    {\normalsize Aplicación al Sistema Transaccional de Facturación Electrónica SUNAT UBL 2.1}
-    \vspace{0.6cm}
-    \hrule height 1.0pt
+    % LOGO OFICIAL UNTELS
+    \includegraphics[width=4.5cm]{assets/logo_untels.png}\\[0.7cm]
     
-    \vspace{2.0cm}
+    \hrule height 1.2pt
+    \vspace{0.4cm}
+    {\large \textbf{INFORME TÉCNICO DE PRUEBAS Y CALIDAD DE SOFTWARE}}\\[0.3cm]
+    {\Large \textbf{Automatización de Pruebas Unitarias, de Integración y Regresión con PHPUnit 10.5}}\\[0.25cm]
+    {\normalsize Verificación y Validación del Sistema de Facturación Electrónica SUNAT UBL 2.1}
+    \vspace{0.4cm}
+    \hrule height 0.8pt
+    
+    \vspace{1.2cm}
     
     \begin{minipage}{0.9\textwidth}
         \begin{flushleft}
-            \textbf{Curso:} Aseguramiento de la Calidad de Software (QA)\\[0.2cm]
-            \textbf{Docente Encargado:} Equipo de Cátedra de Calidad de Software\\[0.4cm]
+            \textbf{Asignatura:} Aseguramiento de la Calidad de Software (QA)\\[0.2cm]
+            \textbf{Docente del Curso:} Cátedra de Calidad de Software\\[0.35cm]
             \textbf{Integrantes del Equipo de Trabajo:}\\[0.2cm]
             \begin{tabular}{ll}
                 $\bullet$ Apolinario Rodriguez, Luis Fernando & \textit{(Líder de Calidad \& Expositor)} \\
                 $\bullet$ Umeres Vilca, Gustavo Aron         & \textit{(Arquitectura de Software \& Tests)} \\
                 $\bullet$ Vasquez Falcón, Mariana Ysabel     & \textit{(Dominio Fiscal \& Casos de Uso)} \\
                 $\bullet$ Ventocilla Alcantara, Alessandro Tito & \textit{(Criptografía UBL 2.1 \& Mocks)} \\
-            \end{tabular}
+            \end{tabular}\\[0.35cm]
+            \textbf{Ciclo Académico:} 2026-I
         \end{flushleft}
     \end{minipage}
     
     \vfill
     
-    {\normalsize Lima, Perú}\\[0.2cm]
+    {\normalsize Villa El Salvador, Lima -- Perú}\\[0.15cm]
     {\small Noviembre de 2026}
 \end{titlepage}
 
 % ==============================================================================
-% ÍNDICE GENERAL Y RESUMEN
+% RESUMEN EJECUTIVO E ÍNDICE
 % ==============================================================================
 \thispagestyle{plain}
 \section*{Resumen Ejecutivo}
 
-El presente documento constituye el informe técnico y académico del proyecto de aseguramiento de la calidad de software aplicado al Sistema de Facturación Electrónica bajo el estándar UBL 2.1, regulado por la Superintendencia Nacional de Aduanas y de Administración Tributaria (SUNAT) del Perú. 
+El presente informe técnico expone el diseño, desarrollo y verificación formal de la suite de pruebas automatizadas construida para el Sistema de Facturación Electrónica bajo el estándar UBL 2.1, de conformidad con las normativas técnicas y tributarias dictadas por la Superintendencia Nacional de Aduanas y de Administración Tributaria (SUNAT) del Perú.
 
-En los sistemas fiscales y financieros, el margen de error tolerado es nulo: una discrepancia de un céntimo en el redondeo monetario, una alteración en la firma digital o un fallo de consistencia en el inventario deriva en el rechazo inmediato del comprobante mediante Códigos de Retorno (CDR), la nulidad tributaria de la transacción y sanciones pecuniarias de hasta una Unidad Impositiva Tributaria (UIT). Para erradicar este riesgo operativo, se diseñó e implementó una suite integral de 39 pruebas automatizadas y 140 aserciones rigurosas bajo el framework PHPUnit 10.5 y PHP 8.2.
+En los sistemas de emisión fiscal, el margen de tolerancia a defectos es nulo: discrepancias mínimas de céntimos en redondeos impositivos, inconsistencias en la firma digital o desajustes en el control de existencias conllevan el rechazo automático del comprobante mediante la Constancia de Recepción (CDR) de SUNAT, contingencias contables y sanciones económicas severas para el emisor (multas de hasta 1 UIT). Ante esta problemática, el equipo de ingeniería implementó una batería de 39 pruebas automatizadas y 140 aserciones rigurosas bajo el framework PHPUnit 10.5 sobre PHP 8.2.
 
-La estrategia de pruebas adopta la metodología de Desarrollo Guiado por Pruebas (\textit{Test-Driven Development} -- TDD), técnicas de diseño formal por Partición de Equivalencia y Análisis de Valores Límite (\textit{Boundary Value Analysis} -- BVA), el patrón canónico \textit{Arrange-Act-Assert} (AAA) y los principios FIRST. Se implementó una base de datos SQLite puramente en memoria RAM (\texttt{:memory:}) para pruebas de persistencia e idempotencia concurrente, y se emplearon Dobles de Prueba (\textit{Mocks}) para aislar completamente las dependencias de red de los servicios SOAP de SUNAT. La suite completa se ejecuta en 0.21 segundos con 0 fallos y 0 errores (100\% verde), demostrando la solidez y viabilidad industrial de la arquitectura.
+La estrategia de aseguramiento de calidad (QA) integra la metodología de Desarrollo Guiado por Pruebas (TDD -- \textit{Test-Driven Development}), técnicas formales de caja negra como Partición de Equivalencia y Análisis de Valores Límite (BVA), el patrón de estructuración \textit{Arrange-Act-Assert} (AAA) y el cumplimiento estricto de los principios FIRST. El sistema emplea SQLite en memoria RAM pura (\texttt{:memory:}) para garantizar la atomicidad e idempotencia en persistencia sin acoplarse al disco, y Dobles de Prueba (\textit{Mocks}) para aislar la comunicación SOAP de SUNAT. La suite completa se ejecuta en 0.21 segundos con una tasa de éxito del 100\% (0 fallos, 0 errores), certificando la confiabilidad industrial de la aplicación.
 
-\vspace{0.8cm}
+\vspace{0.5cm}
 \tableofcontents
 \newpage
 
 % ==============================================================================
-% CAPÍTULO 1: INTRODUCCIÓN Y MARCO NORMATIVO
+% 1. ANTECEDENTES Y MARCO NORMATIVO SUNAT
 % ==============================================================================
-\section{Introducción y Marco Normativo Fiscal}
+\section{Antecedentes y Marco Normativo de SUNAT}
 
-\subsection{Contexto de la Facturación Electrónica en el Perú}
-La obligatoriedad de la emisión electrónica de comprobantes de pago en el Perú surge al amparo del Decreto Ley N$^\circ$ 25632 y las sucesivas Resoluciones de Superintendencia emitidas por la SUNAT (notoriamente las Resoluciones N$^\circ$ 097-2012/SUNAT, 117-2017/SUNAT y modificatorias). Estas resoluciones estipulan que toda transacción comercial que implique entrega de bienes o prestación de servicios debe respaldarse mediante un comprobante digital estructurado que goce de validez legal, certeza temporal y no repudio.
+\subsection{Marco Legal de la Facturación Electrónica en el Perú}
+La obligatoriedad de la emisión de comprobantes de pago electrónicos está regulada por el Decreto Ley N$^\circ$ 25632 (Ley de Comprobantes de Pago) y desarrollada por la Resolución de Superintendencia N$^\circ$ 097-2012/SUNAT y sus correspondientes modificatorias. Estas normativas establecen que todo contribuyente obligado debe emitir sus comprobantes comerciales en formato digital estructurado, garantizando la autenticidad del origen y la integridad del contenido a través de mecanismos criptográficos.
 
 \subsection{El Estándar Internacional UBL 2.1 (Universal Business Language)}
-El formato oficial exigido para facturas (\textit{Invoice}), boletas de venta (\textit{Bill}), notas de crédito y notas de débito es UBL 2.1, basado en esquemas XML estandarizados por OASIS. El XML tributario exige una jerarquía rigurosa de nodos canónicos, entre los que destacan:
+El formato de intercambio de datos establecido por la administración tributaria es el UBL 2.1 (definido por el consorcio internacional OASIS). Un comprobante fiscal peruano es un documento XML que estructura la transacción en nodos canónicos jerárquicos:
 \begin{itemize}[noitemsep]
-    \item \texttt{cac:AccountingSupplierParty}: Identificación unívoca del emisor fiscal (RUC y razón social).
-    \item \texttt{cac:AccountingCustomerParty}: Identificación del receptor comercial (RUC, DNI o Clientes Varios).
-    \item \texttt{cac:TaxTotal}: Desglose tributario exacto discriminado por Código de Tipo de Tributo SUNAT (Catálogo N$^\circ$ 05: 1000 para IGV, 7152 para ICBPER).
-    \item \texttt{cac:LegalMonetaryTotal}: Importes netos, descuentos globales y monto total a cobrar expresado en moneda de curso legal (PEN o USD).
+    \item \texttt{cac:AccountingSupplierParty}: Datos de identidad fiscal del emisor (RUC y Razón Social).
+    \item \texttt{cac:AccountingCustomerParty}: Datos de identidad del adquirente (RUC, DNI o Clientes Varios).
+    \item \texttt{cac:TaxTotal}: Liquidación de impuestos discriminados según el Catálogo N$^\circ$ 05 de SUNAT (Tributo 1000 para IGV, Tributo 7152 para ICBPER).
+    \item \texttt{cac:LegalMonetaryTotal}: Importe total de la venta, valor neto gravado, exonerado e importe total a cobrar expresado en moneda PEN o USD.
 \end{itemize}
 
 \subsection{Criptografía XMLDSIG y Firma Digital X.509}
-La validez jurídica de un comprobante radica en su integridad criptográfica. El emisor debe firmar el documento digitalmente utilizando un certificado digital X.509 v3 autorizado por INDECOPI. El proceso contempla:
+Para que el archivo XML adquiera validez jurídica ante SUNAT e INDECOPI, debe someterse al proceso de firma digital basado en el estándar W3C XMLDSIG:
 \begin{enumerate}[noitemsep]
-    \item \textbf{Canonicalización (C14N):} Conversión del documento XML a una representación canónica estándar (omitiendo espacios arbitrarios y ordenando atributos) según la recomendación W3C.
-    \item \textbf{Cálculo del Resumen Criptográfico (Digest):} Aplicación del algoritmo criptográfico unidireccional SHA-256 sobre el cuerpo del documento (\texttt{DigestValue}).
-    \item \textbf{Firma Asimétrica (SignatureValue):} Cifrado del digest empleando la clave privada RSA (mínimo 2048 bits) del certificado digital.
+    \item \textbf{Canonicalización Canónica (C14N):} Normalización sintáctica del XML (eliminación de espacios redundantes y ordenamiento de atributos).
+    \item \textbf{Cálculo del Digest SHA-256:} Generación de un hash criptográfico de 256 bits representativo del contenido íntegro del comprobante (\texttt{DigestValue}).
+    \item \textbf{Firma Asimétrica RSA con Certificado X.509:} Cifrado del digest utilizando la clave privada del emisor.
 \end{enumerate}
 
-Cualquier intento de alteración posterior a la firma, aun cuando implique un solo dígito en el monto a pagar, invalida el \textit{digest} y es calificado por SUNAT como adulteración tributaria mediante el \textbf{Código de Rechazo 2335} (\textit{``El documento ha sido alterado o el hash no coincide''}).
+Cualquier intento de alteración posterior a la emisión (por ejemplo, cambiar el monto a pagar en el archivo XML) invalida el hash del documento. La plataforma de validación de SUNAT detecta la discrepancia inmediatamente y rechaza la transacción con el \textbf{Código de Rechazo 2335} (\textit{``El documento ha sido alterado o el hash no coincide''}).
 
-\subsection{Problemática Operativa y Riesgos de Calidad}
-En el desarrollo de software tributario, los defectos se traducen en contingencias financieras y penales severas:
+\subsection{Problemática de Calidad y Riesgos Operativos}
+En el desarrollo de software de facturación, los errores comunes conllevan graves repercusiones operativas y legales:
 \begin{itemize}[noitemsep]
-    \item \textbf{Discrepancias de Redondeo Decimal:} Cálculos intermedios con punto flotante primitivo (\texttt{float}) generan desfases de fracciones de céntimo frente a las sumatorias exigidas por el algoritmo de validación de SUNAT.
-    \item \textbf{Fallas en Doble Emisión (Idempotencia):} Intermitencias en las redes de telecomunicaciones provocan que cajeros o terminales de punto de venta envíen dos veces la misma solicitud de cobro, generando duplicación de débitos fiscales.
-    \item \textbf{Inconsistencia de Inventario ante Rechazos:} Si el sistema descuenta existencias físicas en el almacén pero el servidor de SUNAT rechaza la factura (por ejemplo, con Código 2800 si el cliente tiene condición de no habido o baja tributaria), se genera una discrepancia grave entre el inventario físico y el Kardex contable.
+    \item \textbf{Discrepancias en el Redondeo Decimal:} El uso inapropiado de variables de coma flotante (\texttt{float}) genera errores de precisión binaria (IEEE 754), provocando diferencias de fracciones de céntimo que invalidan la sumatoria del comprobante.
+    \item \textbf{Falta de Idempotencia ante Reintentos de Red:} Cuando ocurre un corte de conectividad o el cajero presiona dos veces seguidas el botón de emisión, el sistema no debe duplicar la transacción ni generar dos comprobantes fiscales con números correlativos distintos.
+    \item \textbf{Desincronización de Kardex ante Rechazos Fiscales:} Si el almacén descuenta el stock de productos pero SUNAT rechaza la factura (ejemplo: Código 2800 si el cliente se encuentra en baja de oficio), el sistema debe realizar un rollback transaccional automático para no desfasar el inventario real.
 \end{itemize}
 
 % ==============================================================================
-% CAPÍTULO 2: ARQUITECTURA DEL SISTEMA Y DISEÑO DE SOFTWARE
+% 2. ARQUITECTURA DEL SISTEMA Y DISEÑO DE SOFTWARE
 % ==============================================================================
 \section{Arquitectura del Sistema y Diseño de Software}
 
-Para garantizar alta testeabilidad, mantenimiento evolutivo e independencia tecnológica, el sistema adopta los principios de la \textbf{Arquitectura Hexagonal} (\textit{Ports and Adapters}) y diseño guiado por el dominio (\textit{Domain-Driven Design} -- DDD).
+El sistema fue diseñado bajo el paradigma de la \textbf{Arquitectura Hexagonal} (\textit{Ports and Adapters}) y conceptos de Diseño Guiado por el Dominio (DDD), garantizando el total desacoplamiento de las reglas de negocio respecto a frameworks web, bases de datos o servicios externos de SUNAT.
 
-\subsection{Estructura en Capas Desacopladas}
-El código se organiza en tres capas estrictamente delimitadas:
+\subsection{Organización Modular en Capas}
+La arquitectura delimita tres capas con responsabilidades independientes:
 \begin{enumerate}[noitemsep]
-    \item \textbf{Capa de Dominio (Domain):} Núcleo puro del negocio. Contiene las reglas tributarias peruanas, los algoritmos matemáticos y las entidades y \textit{Value Objects}. No posee dependencias externas ni conoce marcos de trabajo web ni motores de persistencia.
-    \item \textbf{Capa de Aplicación (Application):} Coordina el flujo transaccional. Contiene los Casos de Uso (como \texttt{EmitirFacturaUseCase}), define las interfaces de los puertos de salida (repositorios, emisores SOAP) y gestiona la atomicidad de las operaciones.
-    \item \textbf{Capa de Infraestructura (Infrastructure):} Implementa los adaptadores concretos: repositorios sobre base de datos SQLite, constructores de XML UBL 2.1, firmadores criptográficos OpenSSL y clientes de comunicación SOAP.
+    \item \textbf{Capa de Dominio (Domain):} Modela el núcleo puro de facturación peruana. Aloja los Value Objects inmutables (\texttt{Ruc}, \texttt{MontoMonetario}), entidades y el motor de cálculo tributario. No tiene dependencias de librerías externas.
+    \item \textbf{Capa de Aplicación (Application):} Coordina los flujos de negocio mediante Casos de Uso (ejemplo: \texttt{EmitirFacturaUseCase}). Define los contratos (interfaces) para repositorios de persistencia y clientes SOAP de envío.
+    \item \textbf{Capa de Infraestructura (Infrastructure):} Implementa los adaptadores concretos: persistencia en SQLite, generación del XML UBL 2.1 con DOMDocument, firma digital criptográfica con OpenSSL y comunicación SOAP hacia el Web Service de SUNAT.
 \end{enumerate}
 
 \subsection{Objetos de Valor Inmutables (Value Objects)}
-Se prohíbe el uso de tipos primitivos sueltos (\textit{Primitive Obsession}) para conceptos críticos del dominio:
+Para erradicar la obsesión por tipos primitivos, los conceptos fundamentales se encapsulan en Value Objects inmutables:
 \begin{itemize}[noitemsep]
-    \item \textbf{\texttt{Ruc}:} Encapsula la cadena del RUC, validando en su constructor la longitud de 11 dígitos, el prefijo tributario válido (10 para personas naturales, 20 para personas jurídicas) y la exactitud matemática del dígito verificador.
-    \item \textbf{\texttt{MontoMonetario}:} Modela valores monetarios representados internamente como cadenas numéricas con dos decimales exactos (\textit{Fixed-Point BCMath}), impidiendo el uso de flotantes binarios IEEE 754.
+    \item \textbf{\texttt{Ruc}:} Valida longitud exacta de 11 dígitos, prefijos válidos de personas naturales (10) y jurídicas (20), y la correspondencia matemática del dígito verificador.
+    \item \textbf{\texttt{MontoMonetario}:} Almacena montos monetarios formateados a 2 cifras decimales exactas mediante funciones matemáticas de precisión arbitraria (evitando aproximaciones de punto flotante).
 \end{itemize}
 
-\subsection{El Algoritmo Oficial de SUNAT Módulo 11}
-La autenticidad de los 11 dígitos del RUC responde a un algoritmo de control ponderado por residuos. Sea el vector de dígitos del RUC $D = [d_1, d_2, \dots, d_{11}]$ y el vector oficial de factores ponderadores asignados por SUNAT:
+\subsection{El Algoritmo Matemático Oficial SUNAT Módulo 11}
+La autenticidad de un RUC peruano se valida matemáticamente mediante una suma ponderada con residuo módulo 11. Dado el vector de dígitos $D = [d_1, d_2, \dots, d_{11}]$ y el vector oficial de factores asignados por SUNAT:
 \begin{equation}
     F = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2]
 \end{equation}
 
-El procedimiento de verificación computacional se define en las siguientes etapas:
+El algoritmo se ejecuta formalmente según las siguientes etapas:
 \begin{enumerate}[noitemsep]
-    \item Producto escalar de los primeros 10 dígitos por los factores de ponderación:
+    \item Suma ponderada de los diez primeros dígitos:
     \begin{equation}
         S = \sum_{i=1}^{10} d_i \cdot f_i
     \end{equation}
-    \item Cálculo del residuo de la división entera por módulo 11 y sustracción de base:
+    \item Cálculo del residuo de la división entera por 11 y complemento de base:
     \begin{equation}
         R = 11 - (S \pmod{11})
     \end{equation}
-    \item Asignación del dígito verificador esperado $DV$:
+    \item Regla de mapeo para el Dígito Verificador ($DV$):
     \begin{equation}
         DV = \begin{cases} 
             0 & \text{si } R = 10 \\ 
@@ -204,72 +208,72 @@ El procedimiento de verificación computacional se define en las siguientes etap
             R & \text{en cualquier otro caso} 
         \end{cases}
     \end{equation}
-    \item Condición de validez: $DV = d_{11}$. Si la igualdad no se cumple, el objeto rechaza la construcción lanzando una \texttt{DomainValidationException}.
+    \item Condición de validez: $DV = d_{11}$. Si el dígito calculado no coincide exactamente con el undécimo dígito del RUC, el sistema lanza la excepción \texttt{DomainValidationException} y detiene la transacción.
 \end{enumerate}
 
-\subsection{Motor Tributario y Régimen Multitasa (\texttt{CalculadoraTributaria})}
-El motor tributario calcula en tiempo real las bases imponibles y los tributos de comprobantes complejos según el catálogo de tipos de afectación al IGV (Catálogo N$^\circ$ 07 de SUNAT):
+\subsection{Motor de Cálculo Tributario Multitasa (\texttt{CalculadoraTributaria})}
+El motor calcula de forma reactiva las bases imponibles y los tributos de cada comprobante según los catálogos de SUNAT:
 \begin{itemize}[noitemsep]
-    \item \textbf{Operación Onerosa Gravada (Código 10):} Aplica la tasa general del 18\% sobre el valor de venta base: $\text{IGV} = V_v \times 0.18$.
-    \item \textbf{Operación Exonerada (Código 20):} Aplica para productos de canasta básica y libros. $\text{IGV} = 0.00$; no se traslada débito fiscal.
-    \item \textbf{Operación Inafecta (Código 30):} Servicios médicos, exportaciones y operaciones fuera del campo de aplicación tributaria.
-    \item \textbf{Impuesto a las Bolsas Plásticas (ICBPER - Código 7152):} Tasa fija de S/ 0.50 por bolsa plástica entregada. La regla tributaria exige que el ICBPER \textbf{no se incorpore a la base imponible del IGV}, sino que se sume directamente al importe total a liquidar.
+    \item \textbf{Operaciones Gravadas (Código 10):} Aplica el 18\% de Impuesto General a las Ventas (IGV) sobre el valor de venta base: $\text{IGV} = V_v \times 0.18$.
+    \item \textbf{Operaciones Exoneradas (Código 20):} Productos agropecuarios de primera necesidad y libros. IGV es 0.00.
+    \item \textbf{Operaciones Inafectas (Código 30):} Servicios de educación y exportaciones no afectas al impuesto.
+    \item \textbf{Impuesto a las Bolsas Plásticas (ICBPER - Código 7152):} Tasa fija de S/ 0.50 por cada bolsa plástica entregada. La regla tributaria auditada estipula que el ICBPER \textbf{no forma parte de la base imponible del IGV}, sino que se suma directamente al total a pagar.
 \end{itemize}
 
 % ==============================================================================
-% CAPÍTULO 3: ESTRATEGIA DE ASEGURAMIENTO DE LA CALIDAD (QA)
+% 3. PLAN Y ESTRATEGIA DE ASEGURAMIENTO DE LA CALIDAD (QA)
 % ==============================================================================
-\section{Estrategia de Aseguramiento de la Calidad (QA)}
+\section{Plan y Estrategia de Aseguramiento de la Calidad (QA)}
 
 \subsection{Metodología de Desarrollo Guiado por Pruebas (TDD)}
-El desarrollo de las reglas de liquidación y los Value Objects se ejecutó siguiendo el ciclo canónico \textit{Red - Green - Refactor}:
+Para asegurar que cada regla tributaria cuente con respaldo verificable desde su origen, el equipo aplicó el ciclo de vida TDD (\textit{Red - Green - Refactor}):
 \begin{enumerate}[noitemsep]
-    \item \textbf{Fase Roja (Red):} Redacción del caso de prueba formal antes de implementar la clase o método, estableciendo la aserción esperada según el manual técnico de SUNAT. La ejecución inicial falla de forma predecible.
-    \item \textbf{Fase Verde (Green):} Escritura del código mínimo necesario en el dominio para satisfacer la aserción y lograr que la prueba pase a verde.
-    \item \textbf{Fase de Refactorización (Refactor):} Optimización de la estructura de código, eliminación de duplicidades, introducción de Value Objects e inmutabilidad, garantizando que la suite continúe en verde.
+    \item \textbf{Fase Roja (Red):} Se diseña y redacta la prueba unitaria basada en la especificación de SUNAT antes de escribir el código de producción. Al ejecutarse en terminal, la prueba falla (comportamiento esperado).
+    \item \textbf{Fase Verde (Green):} Se implementa el código estrictamente necesario en el dominio para satisfacer la aserción y lograr la barra verde en PHPUnit.
+    \item \textbf{Fase de Refactorización (Refactor):} Se limpia la estructura de código, se extraen Value Objects y se optimiza el diseño manteniendo la suite 100\% verde.
 \end{enumerate}
 
-\subsection{Técnicas Formales de Diseño de Pruebas}
+\subsection{Técnicas Formales de Diseño de Pruebas de Software}
 
 \subsubsection{Partición de Equivalencia (Equivalence Partitioning)}
-Permite clasificar el espacio de entradas en subconjuntos donde el comportamiento del sistema es previsiblemente uniforme:
+Permite reducir el número de pruebas sin perder exhaustividad, agrupando las entradas en clases de equivalencia válidas e inválidas:
 \begin{itemize}[noitemsep]
-    \item \textit{Clase Válida 1:} RUC con longitud exacta de 11 caracteres y residuo módulo 11 exacto.
-    \item \textit{Clase Inválida 1:} Cadenas alfanuméricas o longitud menor a 11 dígitos.
-    \item \textit{Clase Inválida 2:} Cadenas con longitud mayor a 11 dígitos.
-    \item \textit{Clase Inválida 3:} 11 dígitos numéricos cuyo dígito verificador discrepa del residuo ponderado.
+    \item \textit{Clase Válida 1:} RUC con 11 dígitos numéricos cuyo algoritmo Módulo 11 coincide exactamente.
+    \item \textit{Clase Inválida 1:} Cadenas con caracteres alfabéticos o longitud menor a 11 dígitos.
+    \item \textit{Clase Inválida 2:} Cadenas con longitud superior a 11 dígitos.
+    \item \textit{Clase Inválida 3:} Cadenas de 11 dígitos cuyo dígito verificador es incorrecto.
 \end{itemize}
 
 \subsubsection{Análisis de Valores Límite (Boundary Value Analysis -- BVA)}
-La experiencia en aseguramiento de calidad evidencia que la mayor densidad de fallas radica en las fronteras de decisión. 
+Los defectos se concentran sistemáticamente en los bordes de decisión de las reglas de negocio.
 \begin{itemize}[noitemsep]
-    \item \textbf{Regla Fiscal de Boleta Mayor a S/ 700.00:} El marco tributario de SUNAT establece que si una boleta de venta supera los S/ 700.00, es obligatorio identificar al cliente con su número de documento (DNI o Carné de Extranjería). Por debajo o igual a este monto, se autoriza la emisión a ``Clientes Varios''.
-    \item \textbf{Puntos de Frontera Auditados:}
+    \item \textbf{Regla SUNAT Boleta Mayor a S/ 700.00:} Si el importe total de una boleta de venta supera los S/ 700.00, es obligatorio identificar al cliente mediante DNI o RUC. Por montos menores o iguales a S/ 700.00, se permite emitir a ``Clientes Varios''.
+    \item \textbf{Casos de Prueba en Frontera:}
     \begin{itemize}[noitemsep]
-        \item \textit{Límite inferior ($700.00 - 0.01 = \text{S/ } 699.99$):} Válido sin DNI.
-        \item \textit{Valor en frontera ($\text{S/ } 700.00$):} Válido sin DNI.
-        \item \textit{Límite superior ($700.00 + 0.01 = \text{S/ } 700.01$):} \textbf{Rechazo inmediato} con excepción de negocio si se envía cliente anónimo.
+        \item \textit{Borde Inferior ($700.00 - 0.01 = \text{S/ } 699.99$):} Emisión exitosa sin DNI.
+        \item \textit{Frontera Exacta ($\text{S/ } 700.00$):} Emisión exitosa sin DNI.
+        \item \textit{Borde Superior ($700.00 + 0.01 = \text{S/ } 700.01$):} \textbf{Rechazo obligatorio} con excepción fiscal si se intenta emitir a ``Clientes Varios''.
     \end{itemize}
 \end{itemize}
 
 \subsection{Principios FIRST en Pruebas Unitarias}
-Las pruebas automatizadas del proyecto satisfacen plenamente los 5 postulados FIRST:
+La suite de pruebas fue diseñada cumpliendo los cinco principios FIRST de Clean Code:
 \begin{itemize}[noitemsep]
-    \item \textbf{Fast (Rápidas):} La suite completa de 39 tests se ejecuta en 0.21 segundos en memoria RAM.
-    \item \textbf{Independent (Aisladas):} Cada test inicializa y destruye su propio estado en el ciclo \texttt{setUp()} y \texttt{tearDown()}, sin depender del orden de ejecución.
-    \item \textbf{Repeatable (Repetibles):} El resultado es determinista y no depende de conexiones de red ni variables ambientales del host.
-    \item \textbf{Self-validating (Auto-evaluables):} La prueba reporta un veredicto binario inequívoco: éxito (verde) o fallo (rojo).
-    \item \textbf{Timely (Oportunas):} Construidas en conjunto con el desarrollo de la lógica de dominio.
+    \item \textbf{Fast (Rápidas):} Ejecución de 39 pruebas en apenas 0.21 segundos en memoria RAM.
+    \item \textbf{Independent (Aisladas):} Cada caso de prueba inicializa su propio entorno limpio en \texttt{setUp()} y lo destruye en \texttt{tearDown()}, evitando dependencias de orden.
+    \item \textbf{Repeatable (Repetibles):} Resultados deterministas independientes del sistema operativo o entorno de ejecución.
+    \item \textbf{Self-validating (Auto-evaluables):} Veredicto automático: pasa (verde) o falla (rojo), sin inspección manual.
+    \item \textbf{Timely (Oportunas):} Construidas en conjunto con la lógica tributaria.
 \end{itemize}
 
-\subsection{Rigor en Aserciones: \texttt{assertSame} vs \texttt{assertEquals}}
-En sistemas financieros, la igualdad débil (\texttt{==}) constituye un defecto de diseño crítico. En PHP, la expresión \texttt{assertEquals(100, "100.00")} resulta verdadera debido a la conversión automática de tipos (\textit{type juggling}). 
+\subsection{Rigor en Aserciones: \texttt{assertSame} frente a \texttt{assertEquals}}
+En sistemas transaccionales y fiscales, la igualdad débil (\texttt{==}) representa un defecto de diseño grave. En PHP, la sentencia \texttt{assertEquals(100, "100.00")} devuelve verdadero por conversión automática de tipos (\textit{type juggling}). 
 
-La suite impone el uso estricto de \texttt{assertSame()} (\texttt{===}), que audita de forma simultánea el \textbf{tipo de dato} y el \textbf{contenido exacto}. Esto asegura que los totales formateados para el XML no presenten truncamiento de ceros a la derecha y se mantengan como cadenas formales con precisión de 2 dígitos decimales.
+La suite impone de forma estricta \texttt{assertSame()} (\texttt{===}), que valida simultáneamente el \textbf{tipo de dato exacto} (cadena numérica) y el \textbf{valor monetario exacto con dos decimales}. Esto previene errores de truncamiento en el archivo XML que generarían rechazos inmediatos de SUNAT.
 
-\subsection{Pruebas Parametrizadas: Atributo nativo PHP 8 DataProvider}
-En versiones anteriores de PHPUnit, las pruebas parametrizadas dependían de comentarios interpretados en tiempo de ejecución. En PHPUnit 10.5 y PHP 8.2, se adopta el atributo nativo fuertemente tipado:
-\begin{lstlisting}[language=PHP, caption={Uso de atributos nativos de PHP 8 para pruebas parametrizadas.}]
+\subsection{Pruebas Parametrizadas con el Atributo Nativo PHP 8 DataProvider}
+En lugar de duplicar métodos de prueba, se utiliza el atributo nativo fuertemente tipado de PHP 8.2:
+\begin{lstlisting}[language=PHP, caption={Pruebas parametrizadas de validacion de RUC con DataProvider.}]
 #[DataProvider('proveedorRucsValidos')]
 public function testAceptaRucsValidosConModulo11(string $numero): void
 {
@@ -279,32 +283,32 @@ public function testAceptaRucsValidosConModulo11(string $numero): void
 \end{lstlisting}
 
 \subsection{Dobles de Prueba: Aislamiento del Web Service SOAP de SUNAT}
-Para someter a prueba los casos de uso transaccionales sin depender de los servidores externos de la administración tributaria, se implementaron dobles de prueba (\textit{Test Doubles}) conforme a la taxonomía de Martin Fowler. Se generaron \textbf{Mocks} de la interfaz \texttt{SunatSenderInterface}, configurando expectativas exactas sobre el número de invocaciones (\texttt{expects(\$this->once())}) y simulando respuestas síncronas de CDR de éxito (Código 0) y de rechazo (Código 2800).
+Para someter a prueba los flujos transaccionales sin depender de los servidores de SUNAT, se implementaron \textbf{Mocks} conforme a Martin Fowler. Se generó un Mock de la interfaz \texttt{SunatSenderInterface} con expectativa de invocación única, simulando respuestas síncronas de CDR aceptadas (Código 0) y rechazadas (Código 2800).
 
 % ==============================================================================
-% CAPÍTULO 4: PIRÁMIDE DE PRUEBAS Y MATRIZ DE COBERTURA
+% 4. PIRÁMIDE DE PRUEBAS Y MATRIZ DE COBERTURA
 % ==============================================================================
 \section{Pirámide de Pruebas y Matriz Integral de Cobertura}
 
-\subsection{Distribución de Pruebas según Mike Cohn}
-La arquitectura de aseguramiento de calidad distribuye las 39 pruebas del proyecto siguiendo el modelo de la pirámide de pruebas de Mike Cohn:
+\subsection{Pirámide de Pruebas de Mike Cohn}
+La distribución de pruebas en el proyecto sigue la pirámide de Mike Cohn:
 \begin{itemize}[noitemsep]
-    \item \textbf{Base -- Pruebas Unitarias de Dominio (26 Tests / 67\%):} Ejecutadas en microsegundos. Validan algoritmos matemáticos, Value Objects y el motor tributario.
-    \item \textbf{Nivel Medio -- Pruebas de Integración (7 Tests / 18\%):} Validan la generación de XML UBL 2.1, la firma digital XMLDSIG SHA-256 y la persistencia atómica en SQLite.
-    \item \textbf{Cúspide -- Pruebas de Feature y Casos de Uso (6 Tests / 15\%):} Validan el flujo transaccional completo, la idempotencia contra reintentos y la restitución de inventario en Kardex ante rechazos simulados de SUNAT.
+    \item \textbf{Capa Base -- Pruebas Unitarias de Dominio (26 Tests / 67\%):} Pruebas ultra-rápidas en memoria que validan el algoritmo Módulo 11, Value Objects y el motor de impuestos.
+    \item \textbf{Capa Intermedia -- Pruebas de Integración (7 Tests / 18\%):} Validan la generación del XML UBL 2.1, la firma criptográfica SHA-256 y la persistencia SQLite en memoria.
+    \item \textbf{Capa Superior -- Pruebas de Feature y Casos de Uso (6 Tests / 15\%):} Validan el flujo transaccional completo, la idempotencia contra dobles clics y la restitución de inventario en Kardex ante rechazos fiscales simulados.
 \end{itemize}
 
 \subsection{Matriz Oficial de Cobertura de las 39 Pruebas}
-En la Tabla~\ref{tab:matriz_pruebas} se detalla la matriz exhaustiva de las pruebas automatizadas verificadas en el sistema.
+En la Tabla~\ref{tab:matriz_cobertura} se presenta la matriz oficial de las pruebas automatizadas del proyecto.
 
 \begin{table}[h!]
 \centering
 \small
 \caption{Matriz oficial de cobertura de pruebas automatizadas (PHPUnit 10.5).}
-\label{tab:matriz_pruebas}
+\label{tab:matriz_cobertura}
 \begin{tabularx}{\textwidth}{p{3.5cm}Xcc}
 \toprule
-\textbf{Capa de Software} & \textbf{Componentes Auditados \& Reglas Fiscales} & \textbf{Tests} & \textbf{Aserciones} \\
+\textbf{Capa del Sistema} & \textbf{Componentes Auditados \& Reglas Fiscales} & \textbf{Tests} & \textbf{Aserciones} \\
 \midrule
 Dominio Fiscal & \texttt{Ruc.php}: Algoritmo Módulo 11 oficial SUNAT & 8 & 26 \\
 Dominio Fiscal & \texttt{Ruc.php}: Validación de longitudes y caracteres & 4 & 14 \\
@@ -325,22 +329,20 @@ Casos de Uso & \texttt{EmitirFacturaUseCase}: Flujo exitoso con Mock SUNAT & 2 &
 Casos de Uso & \texttt{EmitirFacturaUseCase}: Rechazo 2800 y Rollback Kardex & 2 & 8 \\
 Casos de Uso & \texttt{EmitirFacturaUseCase}: Validación BVA Boleta > S/ 700 & 2 & 6 \\
 \midrule
-\textbf{Totales Auditados} & \textbf{Suite completa ejecutada con éxito (100\% verde)} & \textbf{39} & \textbf{140} \\
+\textbf{Totales Consolidados} & \textbf{Suite de pruebas ejecutada con éxito (100\% verde)} & \textbf{39} & \textbf{140} \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 % ==============================================================================
-% CAPÍTULO 5: AUDITORÍA DE CASOS DE PRUEBA CRÍTICOS
+% 5. AUDITORÍA DE CASOS DE PRUEBA CRÍTICOS
 % ==============================================================================
 \section{Auditoría de Casos de Prueba Críticos (Código Fuente)}
 
-A continuación se analizan los cinco casos de prueba de mayor trascendencia técnica y operativa del sistema.
-
 \subsection{Caso 1: Algoritmo SUNAT Módulo 11 en Value Object \texttt{Ruc}}
-Garantiza que ningún comprobante sea generado con un RUC sintáctica o matemáticamente inválido.
+Garantiza que ningún comprobante fiscal se emita con un RUC sintáctica o matemáticamente inválido.
 
-\begin{lstlisting}[language=PHP, caption={Implementación del algoritmo Módulo 11 en \texttt{src/Domain/ValueObjects/Ruc.php}.}]
+\begin{lstlisting}[language=PHP, caption={Implementacion del algoritmo Modulo 11 en Ruc.php.}]
 private function validarModulo11(string $ruc): void
 {
     $factores = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2];
@@ -363,9 +365,9 @@ private function validarModulo11(string $ruc): void
 \end{lstlisting}
 
 \subsection{Caso 2: Liquidación de Comprobante Mixto Multirégimen e ICBPER}
-Evalúa que las bolsas fiscales no se contaminen recíprocamente: el IGV se calcula exclusivamente sobre las operaciones gravadas, mientras que el ICBPER se añade al importe total a pagar sin inflar el valor neto de venta.
+Evalúa que las bolsas fiscales no se contaminen entre sí: el IGV se calcula exclusivamente sobre las operaciones onerosas gravadas, mientras que el ICBPER se añade al total a pagar sin alterar la base imponible neta.
 
-\begin{lstlisting}[language=PHP, caption={Prueba unitaria en \texttt{tests/Unit/CalculadoraTributariaTest.php}.}]
+\begin{lstlisting}[language=PHP, caption={Prueba unitaria en CalculadoraTributariaTest.php.}]
 public function testCalculaComprobanteMixtoComplejo(): void
 {
     $items = [
@@ -387,7 +389,7 @@ public function testCalculaComprobanteMixtoComplejo(): void
 \subsection{Caso 3: Prueba de Seguridad Criptográfica (Tamper Test Código 2335)}
 Verifica que la alteración de un solo byte en el archivo XML posterior a la firma sea detectada inmediatamente mediante la canonicalización y el recálculo del digest SHA-256.
 
-\begin{lstlisting}[language=PHP, caption={Prueba de seguridad en \texttt{tests/Integration/XmlAndCryptoIntegrationTest.php}.}]
+\begin{lstlisting}[language=PHP, caption={Prueba de seguridad en XmlAndCryptoIntegrationTest.php.}]
 public function testDetectaAdulteracionDeMontoEnXmlFirmado(): void
 {
     $xmlOriginal = $this->builder->generarFacturaXml($this->factura);
@@ -401,15 +403,15 @@ public function testDetectaAdulteracionDeMontoEnXmlFirmado(): void
     );
 
     $this->expectException(XmlTamperDetectedException::class);
-    $this->expectExceptionCode(2335); // Codigo oficial SUNAT
+    $this->expectExceptionCode(2335); // Codigo oficial de rechazo SUNAT
     $this->verificador->verificarDigest($xmlAdulterado);
 }
 \end{lstlisting}
 
 \subsection{Caso 4: Persistencia Concurrente e Idempotencia (Doble Clic)}
-Demuestra que peticiones idénticas originadas por intermitencias de red o repulsación del botón de cobro devuelven la misma transacción almacenada sin generar dos comprobantes fiscales en la base de datos.
+Demuestra que peticiones idénticas originadas por intermitencias de red o repulsación del botón de cobro devuelven la transacción ya registrada sin generar dos comprobantes fiscales en la base de datos.
 
-\begin{lstlisting}[language=PHP, caption={Test de idempotencia en \texttt{tests/Integration/SqlitePersistenceIntegrationTest.php}.}]
+\begin{lstlisting}[language=PHP, caption={Test de idempotencia en SqlitePersistenceIntegrationTest.php.}]
 public function testPrevieneDobleEmisionPorIdempotencia(): void
 {
     $claveIdempotencia = 'req-uuid-test-12345';
@@ -429,7 +431,7 @@ public function testPrevieneDobleEmisionPorIdempotencia(): void
 \subsection{Caso 5: Resiliencia Transaccional y Rollback Automático de Kardex}
 Verifica la preservación de la invariante de inventario: si SUNAT emite un CDR de rechazo fiscal (Código 2800), el stock previamente reservado de productos se restituye de forma atómica en el almacén.
 
-\begin{lstlisting}[language=PHP, caption={Prueba de feature en \texttt{tests/Feature/FacturacionElectronicaMocksFeatureTest.php}.}]
+\begin{lstlisting}[language=PHP, caption={Prueba de feature en FacturacionElectronicaMocksFeatureTest.php.}]
 public function testRollbackDeKardexAnteRechazoFiscalSunat(): void
 {
     $sunatMock = $this->createMock(SunatSenderInterface::class);
@@ -451,18 +453,18 @@ public function testRollbackDeKardexAnteRechazoFiscalSunat(): void
 \end{lstlisting}
 
 % ==============================================================================
-% CAPÍTULO 6: GUÍA DE EJECUCIÓN Y CERTIFICACIÓN EMPÍRICA
+% 6. GUÍA DE EJECUCIÓN Y CERTIFICACIÓN EMPÍRICA
 % ==============================================================================
 \section{Guía de Reproducción, Ejecución y Certificación Empírica}
 
 \subsection{Instrucciones para Ejecución en Terminal}
 Para reproducir la totalidad de las aserciones en un entorno limpio de desarrollo, se ejecutan las siguientes instrucciones en terminal (PowerShell o Bash):
 
-\begin{lstlisting}[language=bash, caption={Comandos para clonación y ejecución de la suite de pruebas.}]
+\begin{lstlisting}[language=bash, caption={Comandos de ejecucion de la suite de pruebas.}]
 # 1. Posicionarse en el directorio del backend PHP
 cd Billing/backend
 
-# 2. Descargar dependencias e inicializar el autoloader de Composer
+# 2. Descargar dependencias e inicializar autoloader
 composer install --prefer-dist --no-interaction
 
 # 3. Ejecutar la suite completa con reporte detallado
@@ -476,11 +478,11 @@ La ejecución de la suite arrojó los siguientes indicadores empíricos oficiale
     \item \textbf{Aserciones Evaluadas:} 140 aserciones estrictas.
     \item \textbf{Tasa de Aprobación:} 100\% (0 fallos, 0 errores, 0 riesgos, 0 advertencias).
     \item \textbf{Tiempo Total de Ejecución:} 0.21 segundos.
-    \item \textbf{Consumo de Memoria RAM:} 12.00 MB.
+    \item \textbf{Consumo de Memoria RAM:} 12.00 MB (usando SQLite en memoria RAM).
 \end{itemize}
 
 % ==============================================================================
-% CAPÍTULO 7: CONCLUSIONES Y RECOMENDACIONES DE INGENIERÍA
+% 7. CONCLUSIONES Y RECOMENDACIONES
 % ==============================================================================
 \section{Conclusiones y Recomendaciones de Ingeniería}
 
@@ -500,7 +502,7 @@ La ejecución de la suite arrojó los siguientes indicadores empíricos oficiale
 \end{itemize}
 
 % ==============================================================================
-% REFERENCIAS BIBLIOGRÁFICAS
+% 8. REFERENCIAS BIBLIOGRÁFICAS
 % ==============================================================================
 \section*{Referencias Bibliográficas y Normativas}
 \addcontentsline{toc}{section}{Referencias Bibliográficas y Normativas}
